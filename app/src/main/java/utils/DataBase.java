@@ -16,7 +16,8 @@ public class DataBase {
             + DataClientColumns.CLIENT_VIGENCIA_DESDE + " TEXT,"
             + DataClientColumns.CLIENT_VIGENCIA_HASTA + " TEXT,"
             + DataClientColumns.CLIENT_NUMERO_POLIZA + " TEXT PRIMARY KEY,"
-            + DataClientColumns.CLIENT_VALOR_CONTRATO + " TEXT)";
+            + DataClientColumns.CLIENT_VALOR_CONTRATO + " TEXT,"
+            + DataClientColumns.CLIENT_PERIODICIDAD + " TEXT)";
 
     public static final String SQL_CRATE_TABLE_RECAUDOS = "CREATE TABLE "
             + DataBase.TABLE_RECAUDOS + " ("
@@ -34,17 +35,11 @@ public class DataBase {
     public static final String SQL_CRATE_TABLE_TICKETS = "CREATE TABLE "
             + DataBase.TABLE_TICKETS + " ("
             + DataTicketColumns.TICKET_CABECERA + " TEXT,"
-            + DataTicketColumns.TICKET_NIT + " TEXT,"
-            + DataTicketColumns.TICKET_TEL + " TEXT,"
             + DataTicketColumns.TICKET_FECHA + " TEXT,"
             + DataTicketColumns.TICKET_VIGD + " TEXT,"
             + DataTicketColumns.TICKET_VIGH + " TEXT,"
             + DataTicketColumns.TICKET_VALORVIGCONTRATO + " TEXT,"
-            + DataTicketColumns.TICKET_VALORCUOTA + " TEXT,"
-            + DataTicketColumns.TICKET_SALDOVIGENCIA + " TEXT,"
-            + DataTicketColumns.TICKET_CUOTASVENCIDAS + " TEXT,"
-            + DataTicketColumns.TICKET_CUOTAACTUAL + " TEXT,"
-            + DataTicketColumns.TICKET_PENDIENTES + " TEXT,"
+            + DataTicketColumns.TICKET_PERIODICIDAD + " TEXT,"
             + DataTicketColumns.TICKET_NUMRECIBO + " TEXT PRIMARY KEY,"
             + DataTicketColumns.TICKET_NUMCONTRATO + " TEXT,"
             + DataTicketColumns.TICKET_CCCLIENTE + " TEXT,"
@@ -55,17 +50,11 @@ public class DataBase {
 
     public static abstract class DataTicketColumns implements BaseColumns {
         public static final String TICKET_CABECERA = "cabecera";
-        public static final String TICKET_NIT = "nit";
-        public static final String TICKET_TEL = "tel";
         public static final String TICKET_FECHA = "fecha";
         public static final String TICKET_VIGD = "vigD";
         public static final String TICKET_VIGH = "vigH";
         public static final String TICKET_VALORVIGCONTRATO = "valorVigContrato";
-        public static final String TICKET_VALORCUOTA = "valorCuota";
-        public static final String TICKET_SALDOVIGENCIA = "saldoVigencia";
-        public static final String TICKET_CUOTASVENCIDAS = "cuotasVencidas";
-        public static final String TICKET_CUOTAACTUAL = "cuotaActual";
-        public static final String TICKET_PENDIENTES = "pendientes";
+        public static final String TICKET_PERIODICIDAD = "periodicidad";
         public static final String TICKET_NUMRECIBO = "numRecibo";
         public static final String TICKET_NUMCONTRATO = "numContrato";
         public static final String TICKET_CCCLIENTE = "ccCliente";
@@ -83,6 +72,7 @@ public class DataBase {
         public static final String CLIENT_VIGENCIA_HASTA = "vigencia_hasta";
         public static final String CLIENT_NUMERO_POLIZA = "numero_poliza";
         public static final String CLIENT_VALOR_CONTRATO = "valor_contrato";
+        public static final String CLIENT_PERIODICIDAD = "periodicidad";
 
     }
 

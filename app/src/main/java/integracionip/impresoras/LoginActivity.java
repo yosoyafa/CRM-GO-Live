@@ -10,6 +10,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -31,6 +32,7 @@ public class LoginActivity extends AppCompatActivity implements LocationListener
     private static LogicDataBase db;
     private LocationManager locationManager;
     private String latitude, longitude;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +40,8 @@ public class LoginActivity extends AppCompatActivity implements LocationListener
         sharedPreferences = getSharedPreferences("Session", Context.MODE_PRIVATE);
         db = new LogicDataBase(getApplicationContext());
         SharedPreferences.Editor edit = sharedPreferences.edit();
+        toolbar = findViewById(R.id.toolbar_login);
+        setSupportActionBar(toolbar);
         if (sharedPreferences.getBoolean("logged", false)) {
             goMainScreen();
         } else {
@@ -100,8 +104,7 @@ public class LoginActivity extends AppCompatActivity implements LocationListener
                         editor.putString("iniciales_numerador",respuesta.getString("iniciales_numerador"));
                         editor.putString("numerador_rc",respuesta.getString("numerador_rc_manual"));
                         editor.putString("cabecera",respuesta.getString("agencia")+"\n"+respuesta.getString("puntodeventa"));
-                        editor.putString("nit", respuesta.getString("nit"));
-                        editor.putString("tel", respuesta.getString("telefono"));
+                        editor.putString("impresora", respuesta.getString("impresora"));
                         editor.commit();
                         goMainScreen();
                         Toast.makeText(this, "Bienvenido " + respuesta.getString("first_name"),

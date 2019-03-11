@@ -1,9 +1,9 @@
 package model;
 
 public class Client {
-    private String name, id, total, vigenciaDesde, vigenciaHasta, numeroPoliza, valorContrato;
+    private String name, id, total, vigenciaDesde, vigenciaHasta, numeroPoliza, valorContrato, periodicidad;
 
-    public Client(String name, String id, String total, String vigenciaDesde, String vigenciaHasta, String numeroPoliza, String valorContrato) {
+    public Client(String name, String id, String total, String vigenciaDesde, String vigenciaHasta, String numeroPoliza, String valorContrato, String periodicidad) {
         this.name = name;
         this.id = id;
         if (total.equals(null)) {
@@ -15,6 +15,7 @@ public class Client {
         this.vigenciaHasta = vigenciaHasta;
         this.numeroPoliza = numeroPoliza;
         this.valorContrato = valorContrato;
+        this.periodicidad = periodicidad;
     }
 
     public String getName() {
@@ -44,16 +45,16 @@ public class Client {
     public String toString() {
         String out = "Nombre: " + getName() + "\n" +
                 "Cedula: " + getId() + "\n" +
-                "Total cartera: " + getTotal()+ "\n"+
+                "Total cartera: $" + getTotal()+ "\n"+
                 "Vigencia desde: " + getVigenciaDesde() + "\n" +
                 "Vigencia hasta: " + getVigenciaHasta() + "\n" +
                 "Numero Póliza: " + getNumeroPoliza() + "\n" +
-                "Valor contrato: " + getValorContrato();
+                "Valor contrato: $" + getValorContrato();
         return out;
     }
 
     public String toStringRaw() {
-        String out = name + "," + id + "," + total + "," + vigenciaDesde + "," + vigenciaHasta + "," + numeroPoliza + "," + valorContrato;
+        String out = name + "," + id + "," + total + "," + vigenciaDesde + "," + vigenciaHasta + "," + numeroPoliza + "," + valorContrato + ","+ periodicidad;
         return out;
     }
 
@@ -87,5 +88,13 @@ public class Client {
 
     public void setValorContrato(String valorContrato) {
         this.valorContrato = valorContrato;
+    }
+
+    public String getPeriodicidad() {
+        return periodicidad;
+    }
+
+    public void setPeriodicidad(String periodicidad) {
+        this.periodicidad = periodicidad;
     }
 }

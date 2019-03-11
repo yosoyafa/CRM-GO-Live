@@ -42,12 +42,7 @@ public class MainActivity extends AppCompatActivity implements SearchDialog.Exam
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        buttonDownload = findViewById(R.id.button_download_file);
-//        buttonLogout = findViewById(R.id.button_logout);
-//        buttonSearch = findViewById(R.id.button_search);
-//        buttonSync = findViewById(R.id.button_sync);
-//        buttonHistorial = findViewById(R.id.button_historial);
-        toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar_main);
         setSupportActionBar(toolbar);
 
         textView = findViewById(R.id.textView2);
@@ -89,14 +84,6 @@ public class MainActivity extends AppCompatActivity implements SearchDialog.Exam
                 search("historial");
             }
         });
-
-//        buttonLogout.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                logoutDialog();
-//            }
-//        });
-
     }
 
     private void downloadFile() {
@@ -123,10 +110,11 @@ public class MainActivity extends AppCompatActivity implements SearchDialog.Exam
                     String vigencia_hasta = client.getString("vigenciahasta");
                     String numeropoliza = client.getString("numeropoliza");
                     String valorcontrato = client.getString("valorcontrato");
+                    String periodicidad = client.getString("periodicidad1");
                     if (total == null) {
                         total = "0";
                     }
-                    Client cliente = new Client(name, id, total, vigencia_desde, vigencia_hasta, numeropoliza, valorcontrato);
+                    Client cliente = new Client(name, id, total, vigencia_desde, vigencia_hasta, numeropoliza, valorcontrato, periodicidad);
                     db.addClient(cliente);
                 }
 
@@ -213,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements SearchDialog.Exam
         conexion.recaudo(rec.getUser_recaudador(), rec.getLatitud(), rec.getLongitud(), rec.getCedula_cliente(), rec.getValor(), rec.getId_recaudador(), rec.getFecha(), rec.getNumerdaor_offline(), rec.getObservaciones());
         while (!conexion.isFinishProcess()) {
             try {
-                Thread.sleep(100);
+                Thread.sleep(200);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -286,7 +274,7 @@ public class MainActivity extends AppCompatActivity implements SearchDialog.Exam
     private void historial(String cc) {
         System.out.println(db.getTableAsString(DataBase.TABLE_TICKETS));
         ArrayList<Ticket> tickets = db.searchTickets(cc);
-        if(tickets!=null && !tickets.isEmpty()){
+        if(tickets!=null){
             goHistorialActivity(tickets);
         }else{
             Toast.makeText(this, "No se encontró cliente con esa cédula",
@@ -301,9 +289,6 @@ public class MainActivity extends AppCompatActivity implements SearchDialog.Exam
         }
         historialActivity.putExtra("num_tickets", tickets.size());
         startActivity(historialActivity);
-
-//        Toast.makeText(this, "Esta opcion aún no está disponible",
-//                Toast.LENGTH_LONG).show();
     }
 
     private void logoutDialog(){

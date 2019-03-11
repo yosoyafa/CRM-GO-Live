@@ -21,16 +21,16 @@ import java.util.ArrayList;
 
 import model.Client;
 
-public class CardsAdapter extends BaseAdapter {
+public class CardsAdapterRecaudos extends BaseAdapter {
 
     private ArrayList<Client> clients;
     private Activity context;
 
-    public CardsAdapter(){
+    public CardsAdapterRecaudos(){
 
     }
 
-    public CardsAdapter(Activity context, ArrayList<Client> clients) {
+    public CardsAdapterRecaudos(Activity context, ArrayList<Client> clients) {
         this.context = context;
         this.clients = clients;
     }
@@ -56,7 +56,7 @@ public class CardsAdapter extends BaseAdapter {
 
         final Client client = clients.get(i);
 
-        Button button_pagar = view.findViewById(R.id.button_goto_contrato);;
+        Button button_pagar = view.findViewById(R.id.button_goto_contrato);
         button_pagar.setText("Pagar");
         button_pagar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,13 +65,13 @@ public class CardsAdapter extends BaseAdapter {
             }
         });
 
-        TextView contrato = view.findViewById(R.id.tvContrato);;
-        contrato.setText("Numero de contrato: " + client.getNumeroPoliza());
+        TextView contrato = view.findViewById(R.id.tvContrato);
+        contrato.setText("Contrato: " + client.getNumeroPoliza());
         contrato.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 17);
         contrato.setTypeface(null, Typeface.BOLD);
 
-        TextView nombre = view.findViewById(R.id.tvNombre);;
-        nombre.setText("Nombre: " + client.getName());
+        TextView nombre = view.findViewById(R.id.tvNombre);
+        nombre.setText(client.getName());
 
         TextView cedula = view.findViewById(R.id.tvCedula);
         cedula.setText("CC: " + client.getId());

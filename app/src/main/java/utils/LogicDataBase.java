@@ -42,6 +42,7 @@ public class LogicDataBase extends SQLiteOpenHelper{
             values.put(DataBase.DataClientColumns.CLIENT_VIGENCIA_HASTA, client.getVigenciaHasta());
             values.put(DataBase.DataClientColumns.CLIENT_NUMERO_POLIZA, client.getNumeroPoliza());
             values.put(DataBase.DataClientColumns.CLIENT_VALOR_CONTRATO, client.getValorContrato());
+            values.put(DataBase.DataClientColumns.CLIENT_PERIODICIDAD, client.getPeriodicidad());
             db.insert(DataBase.TABLE_CLIENTS, null, values);
             db.close();
         }
@@ -71,17 +72,11 @@ public class LogicDataBase extends SQLiteOpenHelper{
         if(db != null){
             ContentValues values = new ContentValues();
             values.put(DataBase.DataTicketColumns.TICKET_CABECERA, ticket.getCabecera());
-            values.put(DataBase.DataTicketColumns.TICKET_NIT, ticket.getNit());
-            values.put(DataBase.DataTicketColumns.TICKET_TEL, ticket.getTel());
             values.put(DataBase.DataTicketColumns.TICKET_FECHA, ticket.getFecha());
             values.put(DataBase.DataTicketColumns.TICKET_VIGD, ticket.getVigD());
             values.put(DataBase.DataTicketColumns.TICKET_VIGH, ticket.getVigH());
             values.put(DataBase.DataTicketColumns.TICKET_VALORVIGCONTRATO, ticket.getValorVigContrato());
-            values.put(DataBase.DataTicketColumns.TICKET_VALORCUOTA, ticket.getValorCuota());
-            values.put(DataBase.DataTicketColumns.TICKET_SALDOVIGENCIA, ticket.getSaldoVigencia());
-            values.put(DataBase.DataTicketColumns.TICKET_CUOTASVENCIDAS, ticket.getCuotasVencidas());
-            values.put(DataBase.DataTicketColumns.TICKET_CUOTAACTUAL, ticket.getCuotaActual());
-            values.put(DataBase.DataTicketColumns.TICKET_PENDIENTES, ticket.getPendientes());
+            values.put(DataBase.DataTicketColumns.TICKET_PERIODICIDAD, ticket.getPeriodicidad());
             values.put(DataBase.DataTicketColumns.TICKET_NUMRECIBO, ticket.getNumRecibo());
             values.put(DataBase.DataTicketColumns.TICKET_NUMCONTRATO, ticket.getNumContrato());
             values.put(DataBase.DataTicketColumns.TICKET_CCCLIENTE, ticket.getCcCliente());
@@ -106,7 +101,8 @@ public class LogicDataBase extends SQLiteOpenHelper{
                 DataBase.DataClientColumns.CLIENT_VIGENCIA_DESDE,
                 DataBase.DataClientColumns.CLIENT_VIGENCIA_HASTA,
                 DataBase.DataClientColumns.CLIENT_NUMERO_POLIZA,
-                DataBase.DataClientColumns.CLIENT_VALOR_CONTRATO
+                DataBase.DataClientColumns.CLIENT_VALOR_CONTRATO,
+                DataBase.DataClientColumns.CLIENT_PERIODICIDAD
         };
 
         try {
@@ -120,7 +116,8 @@ public class LogicDataBase extends SQLiteOpenHelper{
                     String vigHasta = cursor.getString(4);
                     String numPoliza = cursor.getString(5);
                     String valorContrato = cursor.getString(6);
-                    Client cl = new Client(name, ced, total, vigDesde, vigHasta, numPoliza, valorContrato);
+                    String periodicidad = cursor.getString(7);
+                    Client cl = new Client(name, ced, total, vigDesde, vigHasta, numPoliza, valorContrato, periodicidad);
                     clientes.add(cl);
                     cursor.moveToNext();
                 }
@@ -189,17 +186,11 @@ public class LogicDataBase extends SQLiteOpenHelper{
         String[] parameters = {cedula};
         String[] fields = {
                 DataBase.DataTicketColumns.TICKET_CABECERA,
-                DataBase.DataTicketColumns.TICKET_NIT,
-                DataBase.DataTicketColumns.TICKET_TEL,
                 DataBase.DataTicketColumns.TICKET_FECHA,
                 DataBase.DataTicketColumns.TICKET_VIGD,
                 DataBase.DataTicketColumns.TICKET_VIGH,
                 DataBase.DataTicketColumns.TICKET_VALORVIGCONTRATO,
-                DataBase.DataTicketColumns.TICKET_VALORCUOTA,
-                DataBase.DataTicketColumns.TICKET_SALDOVIGENCIA,
-                DataBase.DataTicketColumns.TICKET_CUOTASVENCIDAS,
-                DataBase.DataTicketColumns.TICKET_CUOTAACTUAL,
-                DataBase.DataTicketColumns.TICKET_PENDIENTES,
+                DataBase.DataTicketColumns.TICKET_PERIODICIDAD,
                 DataBase.DataTicketColumns.TICKET_NUMRECIBO,
                 DataBase.DataTicketColumns.TICKET_NUMCONTRATO,
                 DataBase.DataTicketColumns.TICKET_CCCLIENTE,
@@ -210,7 +201,7 @@ public class LogicDataBase extends SQLiteOpenHelper{
         };
 
         try {
-            Cursor cursor = db.query(DataBase.TABLE_TICKETS, fields, fields[14] + "=?", parameters, null, null, null);
+            Cursor cursor = db.query(DataBase.TABLE_TICKETS, fields, fields[8] + "=?", parameters, null, null, null);
             if(cursor.moveToFirst()){
                 while(!cursor.isAfterLast()){
                     String p0 = cursor.getString(0);
@@ -226,14 +217,8 @@ public class LogicDataBase extends SQLiteOpenHelper{
                     String p10 = cursor.getString(10);
                     String p11 = cursor.getString(11);
                     String p12 = cursor.getString(12);
-                    String p13 = cursor.getString(13);
-                    String p14 = cursor.getString(14);
-                    String p15 = cursor.getString(15);
-                    String p16 = cursor.getString(16);
-                    String p17 = cursor.getString(17);
-                    String p18 = cursor.getString(18);
 
-                    Ticket tick = new Ticket(p0,p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16,p17,p18);
+                    Ticket tick = new Ticket(p0,p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12);
                     tickets.add(tick);
                     cursor.moveToNext();
                 }
@@ -283,6 +268,11 @@ public class LogicDataBase extends SQLiteOpenHelper{
     public void resetRecaudos() {
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("delete from "+ DataBase.TABLE_RECAUDOS);
+    }
+
+    public void resetTickets() {
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("delete from "+ DataBase.TABLE_TICKETS);
     }
 
     public void deleteRecaudo(Recaudo rec) {

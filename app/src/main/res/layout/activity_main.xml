@@ -13,12 +13,12 @@
 
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+        android:id="@+id/toolbar_main"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/colorPrimary"
         android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:popupTheme="@style/CustomPupUpStyle" />
 
 
@@ -125,7 +125,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Buscar"
+                    android:text="Buscar Cliente"
                     android:textAlignment="center"
                     android:textColor="@android:color/black"
                     android:textSize="14sp"
@@ -213,7 +213,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Sincronizar recaudos"
+                    android:text="Sincronizar Recaudos"
                     android:textAlignment="center"
                     android:textColor="@android:color/black"
                     android:textSize="14sp"

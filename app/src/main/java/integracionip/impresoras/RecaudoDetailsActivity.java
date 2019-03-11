@@ -17,6 +17,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -40,6 +41,7 @@ import model.Recaudo;
 import model.Ticket;
 import utils.ConexionHTTP;
 import utils.LogicDataBase;
+import utils.PrefixEditText;
 
 public class RecaudoDetailsActivity extends AppCompatActivity implements PaymentDialog.ExampleDialogListener, LocationListener {
 
@@ -47,23 +49,24 @@ public class RecaudoDetailsActivity extends AppCompatActivity implements Payment
     private TextView tvNombre, tvId, tvTotal, tvPoliza, tvTotalContrato;
     private EditText etObservaciones;
     private FloatingActionButton fabPrint;
-    private EditText etValorAPagar;
+    private PrefixEditText etValorAPagar;
     private Button btnRecaudo;
     private boolean recaudoDone;
     private SharedPreferences sharedPreferences;
     private String recibo;
-    BluetoothAdapter bluetoothAdapter;
-    BluetoothSocket bluetoothSocket;
-    BluetoothDevice bluetoothDevice;
-    OutputStream outputStream;
-    InputStream inputStream;
-    Thread thread;
-    byte[] readBuffer;
-    int readBufferPosition;
+    private BluetoothAdapter bluetoothAdapter;
+    private BluetoothSocket bluetoothSocket;
+    private BluetoothDevice bluetoothDevice;
+    private OutputStream outputStream;
+    private InputStream inputStream;
+    private Thread thread;
+    private byte[] readBuffer;
+    private int readBufferPosition;
     volatile boolean stopWorker;
     private LogicDataBase db;
     private String valorrrr, lat, lon;
     private LocationManager locationManager;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +89,12 @@ public class RecaudoDetailsActivity extends AppCompatActivity implements Payment
         recaudoDone = false;
         recibo = "";
         db = LoginActivity.getDb();
+        toolbar = findViewById(R.id.toolbar_recaudo_details);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -105,13 +114,13 @@ public class RecaudoDetailsActivity extends AppCompatActivity implements Payment
     private void configClient() {
         String clt = getIntent().getStringExtra("client");
         String[] cli = clt.split(",");
-        client = new Client(cli[0],cli[1],cli[2],cli[3],cli[4],cli[5],cli[6]);
+        client = new Client(cli[0],cli[1],cli[2],cli[3],cli[4],cli[5],cli[6],cli[7]);
 
         tvNombre.setText(client.getName());
         tvNombre.setTextSize(16);
         tvId.setText("Cedula: "+client.getId());
         tvTotal.setText("Total cartera: $"+client.getTotal());
-        tvPoliza.setText("Número de Contrato: "+client.getNumeroPoliza());
+        tvPoliza.setText("Contrato: "+client.getNumeroPoliza());
         tvTotalContrato.setText("Valor contrato: $"+client.getValorContrato());
         //tvValorAPagar.setText("Valor a pagar: ");
     }
@@ -128,9 +137,12 @@ public class RecaudoDetailsActivity extends AppCompatActivity implements Payment
                         disconnectBT();
                     }catch(Exception e){
                         e.printStackTrace();
-                        Toast.makeText(getApplicationContext(), "Se debe realizar el recaudo antes de imprimir",
+                        Toast.makeText(getApplicationContext(), "Problemas con conexión a la impresora",
                                 Toast.LENGTH_LONG).show();
                     }
+                }else{
+                    Toast.makeText(getApplicationContext(), "Se debe realizar el recaudo antes de imprimir",
+                            Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -148,54 +160,12 @@ public class RecaudoDetailsActivity extends AppCompatActivity implements Payment
                 }
             }
         });
-//        btnPrint.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if(recaudoDone){
-//                    try{
-//                        findBluetoothDevice();
-//                        openBluetoothPrinter();
-//                        printData(recibo);
-//                        disconnectBT();
-//                    }catch(Exception e){
-//                        e.printStackTrace();
-//                        Toast.makeText(getApplicationContext(), "Se debe realizar el recaudo antes de imprimir",
-//                                Toast.LENGTH_LONG).show();
-//                    }
-//                }
-//            }
-//        });
     }
 
     private void confirmPayment(String value) {
-//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//        builder.setTitle("Resumen del pago");
-//
-//        // Set up the input
-//        final TextView tv = new TextView(this);
-//        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-//        tv.setText(client.toString()+"\nValor a pagar: $"+value);
-//        builder.setView(tv);
-//        final String val = value;
-//        // Set up the buttons
-//        builder.setPositiveButton("Confirmar pago", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                pay(val);
-//                //goMainScreen();
-//            }
-//        });
-//        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                dialog.cancel();
-//            }
-//        });
-//
-//        builder.show();
         PaymentDialog paymentDialog = new PaymentDialog();
         Bundle args = new Bundle();
-        args.putString("info", client.toString() + "\n" + "Observaciones:" + etObservaciones.getText().toString() + "\nValor a pagar: $" + value);
+        args.putString("info", client.toString() + "\n" + "Observaciones: " + etObservaciones.getText().toString() + "\nValor a pagar: $" + value);
         paymentDialog.setArguments(args);
         paymentDialog.show(getSupportFragmentManager(), "example dialog");
 
@@ -227,7 +197,7 @@ public class RecaudoDetailsActivity extends AppCompatActivity implements Payment
         if (!(respuesta==null)) {
             //recuado ONLINE
             try {
-                String idRecaudo = respuesta.getString("id");
+                String idRecaudo = respuesta.getString("NumeroRecibo");
                 String estado = respuesta.getString("estado");
                 if (estado.equals("successful")) {
                     recaudoDone = true;
@@ -242,6 +212,8 @@ public class RecaudoDetailsActivity extends AppCompatActivity implements Payment
                             Toast.LENGTH_LONG).show();
                 }
             } catch (Exception e) {
+                Toast.makeText(getApplicationContext(), "No se pudo realizar el recaudo correctamente.",
+                        Toast.LENGTH_LONG).show();
                 e.printStackTrace();
             }
         }else{
@@ -267,10 +239,8 @@ public class RecaudoDetailsActivity extends AppCompatActivity implements Payment
         String[] date = fecha.split(",");
         String date1 = date[0].replace("-","/");
 
-        Ticket ticket = new Ticket(sharedPreferences.getString("cabecera","-"),sharedPreferences.getString("nit","-"),
-                sharedPreferences.getString("tel","-"),date1,client.getVigenciaDesde(),client.getVigenciaHasta(),"-VALORVIGCONTRATO-",
-                "-VALORCUOTA-","-SALDOVIGENCIA-","-CUOTASVENCIDAS-","-CUOTAACTUAL-","-PENDIENTES",
-                numRecibo,client.getNumeroPoliza(),client.getId(),client.getName(),valorrrr,observaciones,sharedPreferences.getString("name","-"));
+        Ticket ticket = new Ticket(sharedPreferences.getString("cabecera","-"),date1,client.getVigenciaDesde(),client.getVigenciaHasta(),client.getValorContrato(),
+                client.getPeriodicidad(),numRecibo,client.getNumeroPoliza(),client.getId(),client.getName(),valorrrr,observaciones,sharedPreferences.getString("name","-"));
         db.addTicket(ticket);
         recibo = ticket.toString();
     }
@@ -299,7 +269,7 @@ public class RecaudoDetailsActivity extends AppCompatActivity implements Payment
                 for(BluetoothDevice pairedDev:pairedDevice){
 
                     // My Bluetoth printer name is BTP_F09F1A
-                    if(pairedDev.getName().equals("APEX2")){
+                    if(pairedDev.getName().equals(sharedPreferences.getString("impresora", "-"))){
                         bluetoothDevice=pairedDev;
                         System.out.println("Bluetooth Printer Attached: "+pairedDev.getName());
                         break;
@@ -396,6 +366,8 @@ public class RecaudoDetailsActivity extends AppCompatActivity implements Payment
             System.out.println("Printing Text...");
         }catch (Exception ex){
             ex.printStackTrace();
+            Toast.makeText(getApplicationContext(), "Problemas con conexión a la impresora",
+                    Toast.LENGTH_LONG).show();
         }
     }
 
