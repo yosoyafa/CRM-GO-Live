@@ -10,4 +10,9 @@
 
     </style>
 
+    <style name="CustomPupUpStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="overlapAnchor">false</item>
+        <item name="android:dropDownVerticalOffset">-1dp</item>
+    </style>
+
 </resources>

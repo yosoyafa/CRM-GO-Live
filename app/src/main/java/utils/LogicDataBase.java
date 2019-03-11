@@ -22,9 +22,9 @@ public class LogicDataBase extends SQLiteOpenHelper{
     }
 
     public void onCreate(SQLiteDatabase db) {
+        db.execSQL(DataBase.SQL_CRATE_TABLE_TICKETS);
         db.execSQL(DataBase.SQL_CRATE_TABLE_CLIENTS);
         db.execSQL(DataBase.SQL_CRATE_TABLE_RECAUDOS);
-        db.execSQL(DataBase.SQL_CRATE_TABLE_TICKETS);
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -210,7 +210,7 @@ public class LogicDataBase extends SQLiteOpenHelper{
         };
 
         try {
-            Cursor cursor = db.query(DataBase.TABLE_RECAUDOS, fields, fields[14] + "=?", parameters, null, null, null);
+            Cursor cursor = db.query(DataBase.TABLE_TICKETS, fields, fields[14] + "=?", parameters, null, null, null);
             if(cursor.moveToFirst()){
                 while(!cursor.isAfterLast()){
                     String p0 = cursor.getString(0);
@@ -289,5 +289,24 @@ public class LogicDataBase extends SQLiteOpenHelper{
         SQLiteDatabase db = getWritableDatabase();
         String num = rec.getNumerdaor_offline();
         db.delete(DataBase.TABLE_RECAUDOS, DataBase.DataRecaudoColumns.RECAUDO_NUMERADOR_RC + "=" + num, null);
+    }
+
+    public String getTableAsString(String tableName) {
+        SQLiteDatabase db = getReadableDatabase();
+        String tableString = String.format("Table %s:\n", tableName);
+        Cursor allRows = db.rawQuery("SELECT * FROM " + tableName, null);
+        if (allRows.moveToFirst()) {
+            String[] columnNames = allRows.getColumnNames();
+            do {
+                for (String name : columnNames) {
+                    tableString += String.format("%s: %s\n", name,
+                            allRows.getString(allRows.getColumnIndex(name)));
+                }
+                tableString += "\n";
+
+            } while (allRows.moveToNext());
+        }
+
+        return tableString;
     }
 }

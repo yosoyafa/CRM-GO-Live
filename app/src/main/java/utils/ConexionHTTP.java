@@ -7,7 +7,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -79,7 +78,7 @@ public class ConexionHTTP {
                     if(data.charAt(0) == '['){
                         JSONArray ja = new JSONArray(data);
                         response = new JSONObject();
-                        response.put("array", (Object)ja);
+                        response.put("array", ja);
                     }else{
                         response = new JSONObject(data);
                     }
@@ -147,8 +146,8 @@ public class ConexionHTTP {
             post.put("fecha_hora", fecha);
             post.put("numerador_rc",numerador_rc);
             post.put("observaciones",observaciones);
-            System.out.println("URL:"+RECAUDO+user_name+"&latitud="+lat+"&longitud="+lon+"&numerodocumento="+numerodocumento+"&valorrecaudo="+valorrecaudo+"&id="+id+"&rc="+numerador_rc+"&fecha_hora="+fecha);
-            new ConectionTask().execute(RECAUDO+user_name+"&latitud="+lat+"&longitud="+lon+"&numerodocumento="+numerodocumento+"&valorrecaudo="+valorrecaudo+"&id="+id+"&rc="+numerador_rc+"&fecha_hora="+fecha);
+            System.out.println("URL:" + RECAUDO + user_name + "&latitud=" + lat + "&longitud=" + lon + "&numerodocumento=" + numerodocumento + "&valorrecaudo=" + valorrecaudo + "&id=" + id + "&rc=" + numerador_rc + "&fecha_hora=" + fecha + "&detallerecaudo=" + observaciones);
+            new ConectionTask().execute(RECAUDO + user_name + "&latitud=" + lat + "&longitud=" + lon + "&numerodocumento=" + numerodocumento + "&valorrecaudo=" + valorrecaudo + "&id=" + id + "&rc=" + numerador_rc + "&fecha_hora=" + fecha + "&detallerecaudo=" + observaciones);
         } catch (JSONException e) {
             e.printStackTrace();
         }

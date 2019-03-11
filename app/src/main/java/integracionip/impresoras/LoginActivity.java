@@ -7,20 +7,18 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import utils.ConexionHTTP;
-import utils.Location;
 import utils.LogicDataBase;
 import utils.Security;
 
@@ -67,7 +65,7 @@ public class LoginActivity extends AppCompatActivity implements LocationListener
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        android.location.Location location = locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER);
+        android.location.Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         onLocationChanged(location);
     }
 
@@ -90,6 +88,8 @@ public class LoginActivity extends AppCompatActivity implements LocationListener
                 String hashWeb = respuesta.getString("user_hash");
                 Security security = new Security();
                 String hashLocal = security.md5(pass);
+                System.out.println("HASH LOCAL: " + hashLocal);
+                System.out.println("HASH WEB: " + hashWeb);
                 if (!respuesta.getString("user_name").equals("Usuario NO Autorizado para APP")) {
                     if (hashWeb.equals(hashLocal)) {
                         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -135,13 +135,17 @@ public class LoginActivity extends AppCompatActivity implements LocationListener
     }
 
     public void setDb(LogicDataBase db) {
-        this.db = db;
+        LoginActivity.db = db;
     }
 
     @Override
     public void onLocationChanged(android.location.Location location) {
-        longitude = location.getLongitude()+"";
-        latitude = location.getLatitude()+"";
+        try {
+            longitude = location.getLongitude() + "";
+            latitude = location.getLatitude() + "";
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

@@ -4,13 +4,16 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,62 +26,77 @@ import model.Client;
 import model.Recaudo;
 import model.Ticket;
 import utils.ConexionHTTP;
+import utils.DataBase;
 import utils.LogicDataBase;
 
 public class MainActivity extends AppCompatActivity implements SearchDialog.ExampleDialogListener{
 
     private TextView textView;
     private SharedPreferences sharedPreferences;
+    private Toolbar toolbar;
     private Button buttonLogout, buttonDownload, buttonSearch, buttonSync, buttonHistorial;
     private LogicDataBase db;
+    private CardView cardSearch, cardHistory, cardDownload, cardSync;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        buttonDownload = findViewById(R.id.button_download_file);
-        buttonLogout = findViewById(R.id.button_logout);
-        buttonSearch = findViewById(R.id.button_search);
-        buttonSync = findViewById(R.id.button_sync);
-        buttonHistorial = findViewById(R.id.button_historial);
+//        buttonDownload = findViewById(R.id.button_download_file);
+//        buttonLogout = findViewById(R.id.button_logout);
+//        buttonSearch = findViewById(R.id.button_search);
+//        buttonSync = findViewById(R.id.button_sync);
+//        buttonHistorial = findViewById(R.id.button_historial);
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         textView = findViewById(R.id.textView2);
         sharedPreferences = getSharedPreferences("Session", Context.MODE_PRIVATE);
-        textView.setText(sharedPreferences.getString("user", "-"));
+        String tv_nombre = sharedPreferences.getString("user", "-");
+        textView.setText("Bienvenido, " + tv_nombre);
+
+        cardDownload = findViewById(R.id.cardDownload);
+        cardSearch = findViewById(R.id.cardSearch);
+        cardSync = findViewById(R.id.cardSync);
+        cardHistory = findViewById(R.id.cardHistory);
+
         setOnClickButtons();
         db = LoginActivity.getDb();
     }
 
     private void setOnClickButtons() {
-        buttonSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                search("search");
-            }
-        });
-        buttonDownload.setOnClickListener(new View.OnClickListener() {
+        cardDownload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 downloadFile();
             }
         });
-        buttonLogout.setOnClickListener(new View.OnClickListener() {
+        cardSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                logoutDialog();
+                search("search");
             }
         });
-        buttonSync.setOnClickListener(new View.OnClickListener() {
+        cardSync.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 sync();
             }
         });
-        buttonHistorial.setOnClickListener(new View.OnClickListener() {
+        cardHistory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 search("historial");
             }
         });
+
+//        buttonLogout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                logoutDialog();
+//            }
+//        });
+
     }
 
     private void downloadFile() {
@@ -146,39 +164,44 @@ public class MainActivity extends AppCompatActivity implements SearchDialog.Exam
 
     private void sync() {
         ArrayList<Recaudo> recaudos2sync = db.selectRecaudos();
-        if(recaudos2sync!=null && recaudos2sync.size()!=0) {
-            int success = 0;
-            for (int a = 0; a < recaudos2sync.size(); a++) {
-                Recaudo actual = recaudos2sync.get(a);
-                if(actual.isOnline()==0) {
-                    boolean b = sync1recaudo(actual);
-                    if (b) {
-                        success++;
+        if (recaudos2sync != null) {
+            if (recaudos2sync.size() != 0) {
+                int success = 0;
+                for (int a = 0; a < recaudos2sync.size(); a++) {
+                    Recaudo actual = recaudos2sync.get(a);
+                    if (actual.isOnline() == 0) {
+                        boolean b = sync1recaudo(actual);
+                        if (b) {
+                            success++;
+                        }
                     }
                 }
+                String msg = "Se han sincronizado " + success + " recaudos de " + recaudos2sync.size() + " (" + success + "/" + recaudos2sync.size() + ")";
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Sincronización de recaudos offline");
+
+                // Set up the input
+                final TextView tv = new TextView(this);
+                // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                tv.setText(msg);
+                tv.setGravity(Gravity.CENTER_HORIZONTAL);
+                builder.setView(tv);
+
+                // Set up the buttons
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+                builder.show();
+            } else {
+                Toast.makeText(this, "No hay recaudos por sincronizar",
+                        Toast.LENGTH_LONG).show();
             }
-            String msg = "Se han sincronizado " + success + " recaudos de " + recaudos2sync.size() + " (" + success + "/" + recaudos2sync.size() + ")";
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Sincronización de recaudos offline");
-
-            // Set up the input
-            final TextView tv = new TextView(this);
-            // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-            tv.setText(msg);
-            tv.setGravity(Gravity.CENTER_HORIZONTAL);
-            builder.setView(tv);
-
-            // Set up the buttons
-            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-
-            builder.show();
-        }else{
-            Toast.makeText(this, "No hay recaudos por sincronizar",
+        } else {
+            Toast.makeText(this, "No se pudo realizar la descarga, revisa tu conexión a internet",
                     Toast.LENGTH_LONG).show();
         }
     }
@@ -261,6 +284,7 @@ public class MainActivity extends AppCompatActivity implements SearchDialog.Exam
     }
 
     private void historial(String cc) {
+        System.out.println(db.getTableAsString(DataBase.TABLE_TICKETS));
         ArrayList<Ticket> tickets = db.searchTickets(cc);
         if(tickets!=null && !tickets.isEmpty()){
             goHistorialActivity(tickets);
@@ -271,17 +295,15 @@ public class MainActivity extends AppCompatActivity implements SearchDialog.Exam
     }
 
     private void goHistorialActivity(ArrayList<Ticket> tickets) {
-//        Intent historialActivity = new Intent(getApplicationContext(), HistorialActivity.class);
-//        for(int a = 0; a<tickets.size(); a++){
-//            historialActivity.putExtra("ticket"+a, tickets.get(a).toString());
-//        }
-//        historialActivity.putExtra("num_tickets", tickets.size());
-//        startActivity(historialActivity);
+        Intent historialActivity = new Intent(getApplicationContext(), HistorialActivity.class);
+        for (int a = 0; a < tickets.size(); a++) {
+            historialActivity.putExtra("ticket" + a, tickets.get(a).toStringRaw());
+        }
+        historialActivity.putExtra("num_tickets", tickets.size());
+        startActivity(historialActivity);
 
-
-
-        Toast.makeText(this, "Esta opcion aún no está disponible",
-                Toast.LENGTH_LONG).show();
+//        Toast.makeText(this, "Esta opcion aún no está disponible",
+//                Toast.LENGTH_LONG).show();
     }
 
     private void logoutDialog(){
@@ -305,4 +327,51 @@ public class MainActivity extends AppCompatActivity implements SearchDialog.Exam
         adb.show();
     }
 
+    public CardView getCardSearch() {
+        return cardSearch;
+    }
+
+    public void setCardSearch(CardView cardSearch) {
+        this.cardSearch = cardSearch;
+    }
+
+    public CardView getCardHistory() {
+        return cardHistory;
+    }
+
+    public void setCardHistory(CardView cardHistory) {
+        this.cardHistory = cardHistory;
+    }
+
+    public CardView getCardDownload() {
+        return cardDownload;
+    }
+
+    public void setCardDownload(CardView cardDownload) {
+        this.cardDownload = cardDownload;
+    }
+
+    public CardView getCardSync() {
+        return cardSync;
+    }
+
+    public void setCardSync(CardView cardSync) {
+        this.cardSync = cardSync;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_logout:
+                logoutDialog();
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }

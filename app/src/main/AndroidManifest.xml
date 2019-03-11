@@ -32,6 +32,7 @@
         </activity>
         <activity
             android:name=".MainActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:screenOrientation="portrait" />
         <activity
             android:name=".RecaudoActivity"
@@ -39,9 +40,7 @@
         <activity
             android:name=".RecaudoDetailsActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".CardsAdapter" />
-        <activity android:name=".SearchDialog" />
-        <activity android:name=".PaymentDialog" />
+
         <activity android:name=".HistorialActivity"
             android:screenOrientation="portrait" ></activity>
     </application>
