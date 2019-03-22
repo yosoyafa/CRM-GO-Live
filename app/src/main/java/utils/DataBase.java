@@ -10,18 +10,20 @@ public class DataBase {
 
     public static final String SQL_CRATE_TABLE_CLIENTS = "CREATE TABLE "
             + DataBase.TABLE_CLIENTS + " ("
+            + "key_id INTEGER PRIMARY KEY AUTOINCREMENT,"
             + DataClientColumns.CLIENT_ID + " TEXT,"
             + DataClientColumns.CLIENT_NAME + " TEXT,"
             + DataClientColumns.CLIENT_TOTAL + " TEXT,"
             + DataClientColumns.CLIENT_VIGENCIA_DESDE + " TEXT,"
             + DataClientColumns.CLIENT_VIGENCIA_HASTA + " TEXT,"
-            + DataClientColumns.CLIENT_NUMERO_POLIZA + " TEXT PRIMARY KEY,"
+            + DataClientColumns.CLIENT_NUMERO_POLIZA + " TEXT,"
             + DataClientColumns.CLIENT_VALOR_CONTRATO + " TEXT,"
             + DataClientColumns.CLIENT_PERIODICIDAD + " TEXT)";
 
     public static final String SQL_CRATE_TABLE_RECAUDOS = "CREATE TABLE "
             + DataBase.TABLE_RECAUDOS + " ("
-            + DataRecaudoColumns.RECAUDO_CEDULA_CLIENTE + " TEXT PRIMARY KEY,"
+            + "key_id INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + DataRecaudoColumns.RECAUDO_CEDULA_CLIENTE + " TEXT,"
             + DataRecaudoColumns.RECAUDO_NUMERADOR_RC + " TEXT,"
             + DataRecaudoColumns.RECAUDO_ID_RECAUDADOR + " TEXT,"
             + DataRecaudoColumns.RECAUDO_USER_RECAUDADOR + " TEXT,"

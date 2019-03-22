@@ -14,7 +14,7 @@ import android.widget.TextView;
 public class PaymentDialog extends AppCompatDialogFragment {
     private TextView tvRecibo;
     private ExampleDialogListener listener;
-    private String resumen;
+    private String resumen, type;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -23,21 +23,41 @@ public class PaymentDialog extends AppCompatDialogFragment {
         View view = inflater.inflate(R.layout.activity_payment_dialog, null);
         tvRecibo = view.findViewById(R.id.tv_payyyy);
         resumen = getArguments().getString("info");
-        builder.setView(view)
-                .setTitle("Resumen del pago")
-                .setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+        type = getArguments().getString("type");
 
-                    }
-                })
-                .setPositiveButton("RECAUDAR", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        listener.applyTexts();
-                        dismiss();
-                    }
-                });
+        if(type.equals("gestion")){
+            builder.setView(view)
+                    .setTitle("Gestión de cartera")
+                    .setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                        }
+                    })
+                    .setPositiveButton("RECAUDAR", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            listener.applyTexts();
+                            dismiss();
+                        }
+                    });
+        }else{
+            builder.setView(view)
+                    .setTitle("Resumen del pago")
+                    .setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                        }
+                    })
+                    .setPositiveButton("RECAUDAR", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            listener.applyTexts();
+                            dismiss();
+                        }
+                    });
+        }
         System.out.println(resumen);
         tvRecibo.setText(resumen);
         return builder.create();
@@ -46,7 +66,6 @@ public class PaymentDialog extends AppCompatDialogFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-
         try {
             listener = (ExampleDialogListener) context;
         } catch (ClassCastException e) {
@@ -58,5 +77,7 @@ public class PaymentDialog extends AppCompatDialogFragment {
     public interface ExampleDialogListener {
         void applyTexts();
     }
+
+
 
 }

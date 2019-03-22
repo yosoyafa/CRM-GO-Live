@@ -1,7 +1,7 @@
 package model;
 
 public class Client {
-    private String name, id, total, vigenciaDesde, vigenciaHasta, numeroPoliza, valorContrato, periodicidad;
+    private String name, id, total, vigenciaDesde, vigenciaHasta, numeroPoliza, valorContrato, periodicidad, telefono, direccion;
 
     public Client(String name, String id, String total, String vigenciaDesde, String vigenciaHasta, String numeroPoliza, String valorContrato, String periodicidad) {
         this.name = name;
@@ -45,7 +45,9 @@ public class Client {
     public String toString() {
         String out = "Nombre: " + getName() + "\n" +
                 "Cedula: " + getId() + "\n" +
-                "Total cartera: $" + getTotal()+ "\n"+
+                "Teléfono: " + getTelefono() + "\n" +
+                "Dirección: " + getDireccion() + "\n" +
+                "Total cartera: $" + getTotal() + "\n"+
                 "Vigencia desde: " + getVigenciaDesde() + "\n" +
                 "Vigencia hasta: " + getVigenciaHasta() + "\n" +
                 "Numero Póliza: " + getNumeroPoliza() + "\n" +
@@ -96,5 +98,21 @@ public class Client {
 
     public void setPeriodicidad(String periodicidad) {
         this.periodicidad = periodicidad;
+    }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    public String getDireccion() {
+        return direccion;
+    }
+
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
     }
 }

@@ -15,16 +15,16 @@ import model.Ticket;
 public class LogicDataBase extends SQLiteOpenHelper{
 
     private static final String DATABASE_NAME = "BaseDeDatos.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 5;
 
     public LogicDataBase(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(DataBase.SQL_CRATE_TABLE_TICKETS);
         db.execSQL(DataBase.SQL_CRATE_TABLE_CLIENTS);
         db.execSQL(DataBase.SQL_CRATE_TABLE_RECAUDOS);
+        db.execSQL(DataBase.SQL_CRATE_TABLE_TICKETS);
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -231,12 +231,12 @@ public class LogicDataBase extends SQLiteOpenHelper{
         }
     }
 
-    public ArrayList<Recaudo> selectRecaudos(){
+    public ArrayList<Recaudo> selectRecaudosOffline(){
         SQLiteDatabase db = this.getReadableDatabase();
         //Cursor cursor = null;
         ArrayList<Recaudo> recaudos2sync = new ArrayList<Recaudo>();
         try {
-            Cursor cursor = db.rawQuery("select * from "+DataBase.TABLE_RECAUDOS, null);
+            Cursor cursor = db.rawQuery("select * from "+DataBase.TABLE_RECAUDOS+" where online = 0", null);
             recaudos2sync = new ArrayList<Recaudo>();
             if (cursor.moveToFirst()) {
                 while (!cursor.isAfterLast()) {
@@ -249,11 +249,13 @@ public class LogicDataBase extends SQLiteOpenHelper{
                     String fecha= cursor.getString(cursor.getColumnIndex("fecha"));
                     String numerador_rc = cursor.getString(cursor.getColumnIndex("numerador_rc"));
                     String observaciones = cursor.getString(cursor.getColumnIndex("observaciones"));
-                    Recaudo recaudo = new Recaudo(user_recaudador,id_recaudador,cedula_cliente,valor,lat,lon,0,fecha,numerador_rc, observaciones);
+                    int online = cursor.getInt(cursor.getColumnIndex("online"));
+                    Recaudo recaudo = new Recaudo(user_recaudador,id_recaudador,cedula_cliente,valor,lat,lon,online,fecha,numerador_rc, observaciones);
                     recaudos2sync.add(recaudo);
                     cursor.moveToNext();
                 }
             }
+            cursor.close();
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -292,11 +294,18 @@ public class LogicDataBase extends SQLiteOpenHelper{
                     tableString += String.format("%s: %s\n", name,
                             allRows.getString(allRows.getColumnIndex(name)));
                 }
-                tableString += "\n";
+                tableString += "\n---------------\n";
 
             } while (allRows.moveToNext());
         }
 
-        return tableString;
+        return "----"+tableName+"----\n"+tableString;
+    }
+
+    public void deleteDups(String table) {
+        if(table.equals("clients")) {
+            SQLiteDatabase db = getWritableDatabase();
+            db.execSQL("delete from "+DataBase.TABLE_CLIENTS+" where rowid not in (select min(rowid) from "+DataBase.TABLE_CLIENTS+" group by "+DataBase.DataClientColumns.CLIENT_NUMERO_POLIZA+");");
+        }
     }
 }

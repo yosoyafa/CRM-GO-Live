@@ -107,8 +107,6 @@ public class LoginActivity extends AppCompatActivity implements LocationListener
                         editor.putString("impresora", respuesta.getString("impresora"));
                         editor.commit();
                         goMainScreen();
-                        Toast.makeText(this, "Bienvenido " + respuesta.getString("first_name"),
-                                Toast.LENGTH_LONG).show();
                     } else {
                         Toast.makeText(this, "Usuario o contraseña incorrecta",
                                 Toast.LENGTH_LONG).show();

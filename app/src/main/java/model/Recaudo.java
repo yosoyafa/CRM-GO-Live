@@ -81,7 +81,8 @@ public class Recaudo {
                 "\nlatitud: "+latitud+
                 "\nlongitud: "+longitud+
                 "\nonline: "+online+
-                "\nfecha: "+fecha;
+                "\nfecha: "+fecha+
+                "\nobservacion: "+observaciones;
     }
 
     public String getFecha() {
