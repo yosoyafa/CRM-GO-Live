@@ -139,7 +139,6 @@ public class MainActivity extends AppCompatActivity implements SearchDialog.Exam
             }
         }
         JSONArray respuesta = conexion.getResponseArray();
-        store(conexion.getDataString());
 
         if (respuesta != null) {
             db.resetClients();
@@ -186,36 +185,6 @@ public class MainActivity extends AppCompatActivity implements SearchDialog.Exam
             Toast.makeText(this, "No se pudo realizar la descarga, revisa tu conexión a internet",
                     Toast.LENGTH_LONG).show();
         }
-    }
-
-    private void store(String fileContents) {
-        if (isExternalStorageWritable()) {
-            if (checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                File file = new File(Environment.getExternalStorageDirectory(), "cartera.txt");
-                try {
-                    FileOutputStream fos = new FileOutputStream(file);
-                    fos.write(fileContents.getBytes());
-                    fos.close();
-                } catch (Exception e) {
-                    System.out.println("error escribiendo");
-                    e.printStackTrace();
-                }
-            } else {
-                System.out.println("cannot write-manifestpermissions");
-            }
-        } else {
-            System.out.println("cannot write-isexternalstoragewritable");
-        }
-    }
-
-    public boolean checkPermission(String permission) {
-        int check = ContextCompat.checkSelfPermission(this, permission);
-        return (check == PackageManager.PERMISSION_GRANTED);
-    }
-
-    public boolean isExternalStorageWritable() {
-        String state = Environment.getExternalStorageState();
-        return Environment.MEDIA_MOUNTED.equals(state);
     }
 
     private void search(String action) {

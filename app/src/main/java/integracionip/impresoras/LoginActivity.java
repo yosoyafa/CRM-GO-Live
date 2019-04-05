@@ -27,8 +27,7 @@ import utils.Security;
 
 public class LoginActivity extends AppCompatActivity implements LocationListener {
 
-    private AutoCompleteTextView mEmailView;
-    private EditText mPasswordView;
+    private EditText mPasswordView, mEmailView;
     private Button mEmailSignInButton;
     private SharedPreferences sharedPreferences;
     private static LogicDataBase db;
