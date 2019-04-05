@@ -27,6 +27,8 @@ public class ConexionHTTP {
     public final static String DOWNLOAD = "https://ws.crmolivosvillavicencio.com/app/getCartera1.php?user_id=";
     public final static String RECAUDO = "https://ws.crmolivosvillavicencio.com/app/getRecaudos.php?user_name=";
     public final static String BUSCAR_CC_EN_CARTERA = "https://ws.crmolivosvillavicencio.com/app/getCarterabyCedula.php?user_id=";
+    public final static String GESTION = "https://ws.crmolivosvillavicencio.com/app/getGestionCartera.php?";
+    public final static String UPDATE = "https://ws.crmolivosvillavicencio.com/app/getUpdateInfo.php?";
 
     private JSONObject response;
     private JSONArray responseArray;
@@ -37,7 +39,6 @@ public class ConexionHTTP {
     public ConexionHTTP() {
         finishProcess = false;
     }
-
 
     public JSONObject getRespuesta() {
         return response;
@@ -169,7 +170,7 @@ public class ConexionHTTP {
         }
     }
 
-    public void recaudo(String user_name, String lat, String lon, String numerodocumento, String valorrecaudo, String id, String fecha, String numerador_rc, String observaciones){
+    public void recaudo(String user_name, String lat, String lon, String numerodocumento, String valorrecaudo, String id, String fecha, String numerador_rc, String observaciones, String fdp){
         try {
             JSONObject post = new JSONObject();
             post.put("user_name", user_name);
@@ -181,8 +182,54 @@ public class ConexionHTTP {
             post.put("fecha_hora", fecha);
             post.put("numerador_rc",numerador_rc);
             post.put("observaciones",observaciones);
-            System.out.println("URL:" + RECAUDO + user_name + "&latitud=" + lat + "&longitud=" + lon + "&numerodocumento=" + numerodocumento + "&valorrecaudo=" + valorrecaudo + "&id=" + id + "&rc=" + numerador_rc + "&fecha_hora=" + fecha + "&detallerecaudo=" + observaciones);
-            new ConectionTask().execute(RECAUDO + user_name + "&latitud=" + lat + "&longitud=" + lon + "&numerodocumento=" + numerodocumento + "&valorrecaudo=" + valorrecaudo + "&id=" + id + "&rc=" + numerador_rc + "&fecha_hora=" + fecha + "&detallerecaudo=" + observaciones);
+            post.put("forma_de_pago",fdp);
+            System.out.println("URL:" + RECAUDO + user_name + "&latitud=" + lat + "&longitud=" + lon + "&numerodocumento=" + numerodocumento + "&valorrecaudo=" + valorrecaudo + "&id=" + id + "&rc=" + numerador_rc + "&fecha_hora=" + fecha + "&detallerecaudo=" + observaciones + "&forma_de_pago=" + fdp);
+            new ConectionTask().execute(RECAUDO + user_name + "&latitud=" + lat + "&longitud=" + lon + "&numerodocumento=" + numerodocumento + "&valorrecaudo=" + valorrecaudo + "&id=" + id + "&rc=" + numerador_rc + "&fecha_hora=" + fecha + "&detallerecaudo=" + observaciones + "&forma_de_pago=" + fdp);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void gestion(String tipoGestion, String idUsuario, String documento, String fecha, String latitud, String longitud, String acuerdo, String fechaAcuerdo, String valorAcuerdo, String descripcion, String resultadoGestion, String user){
+        try {
+            JSONObject post = new JSONObject();
+            post.put("tipo_gestion", tipoGestion);
+            post.put("id_usuario", idUsuario);
+            post.put("documento", documento);
+            post.put("fecha", fecha);
+            post.put("latitud", latitud);
+            post.put("longitud", longitud);
+            post.put("acuerdo", acuerdo);
+            post.put("fecha_acuerdo", fechaAcuerdo);
+            post.put("valor_acuerdo", valorAcuerdo);
+            post.put("descripcion", descripcion);
+            post.put("resultado_gestion", resultadoGestion);
+            post.put("username", user);
+            System.out.println("URL:" + GESTION + "user_name="+user + "&latitud=" + latitud + "&longitud=" + longitud + "&numerodocumento=" + documento + "&tipo_gestion=" + tipoGestion + "&fecha=" + fecha + "&acuerdo_pago=" + acuerdo + "&fecha_acuerdo=" + fechaAcuerdo + "&valor_acuerdo=" + valorAcuerdo + "&descripcion=" + descripcion + "&resultado_gestion=" + resultadoGestion + "&user_id=" + idUsuario);
+            new ConectionTask().execute(GESTION + "user_name="+user + "&latitud=" + latitud + "&longitud=" + longitud + "&numerodocumento=" + documento + "&tipo_gestion=" + tipoGestion + "&fecha=" + fecha + "&acuerdo_pago=" + acuerdo + "&fecha_acuerdo=" + fechaAcuerdo + "&valor_acuerdo=" + valorAcuerdo + "&descripcion=" + descripcion + "&resultado_gestion=" + resultadoGestion + "&user_id=" + idUsuario);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void edicion(String user, String id, String nombre, String cedula, String tel1viejo, String tel1nuevo, String tel2viejo, String tel2nuevo, String direccionVieja, String direccionNueva, String fecha, String lat, String lon){
+        try {
+            JSONObject post = new JSONObject();
+            post.put("user", user);
+            post.put("id", id);
+            post.put("nombre", nombre);
+            post.put("cedula", cedula);
+            post.put("tel1viejo", tel1viejo);
+            post.put("tel1nuevo", tel1nuevo);
+            post.put("tel2viejo", tel2viejo);
+            post.put("tel2nuevo", tel2nuevo);
+            post.put("direccion_vieja", direccionVieja);
+            post.put("direccion_nuevo", direccionNueva);
+            post.put("fecha", fecha);
+            post.put("latitud", lat);
+            post.put("longitud", lon);
+            System.out.println("URL:" + UPDATE + "user_name="+user + "&latitud=" + lat + "&longitud=" + lon + "&numerodocumento=" + cedula + "&fecha=" + fecha + "&user_id=" + id + "&celular1_o=" + tel1viejo + "&celular1_n=" + tel1nuevo + "&celular2_o=" + tel2viejo + "&celular2_n=" + tel2nuevo + "&direccion_o=" + direccionVieja + "&direccion_n=" + direccionNueva);
+            new ConectionTask().execute(UPDATE + "user_name="+user + "&latitud=" + lat + "&longitud=" + lon + "&numerodocumento=" + cedula + "&fecha=" + fecha + "&user_id=" + id + "&celular1_o=" + tel1viejo + "&celular1_n=" + tel1nuevo + "&celular2_o=" + tel2viejo + "&celular2_n=" + tel2nuevo + "&direccion_o=" + direccionVieja + "&direccion_n=" + direccionNueva);
         } catch (JSONException e) {
             e.printStackTrace();
         }

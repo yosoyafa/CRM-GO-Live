@@ -1,10 +1,10 @@
 package model;
 
 public class Recaudo {
-    private String user_recaudador, id_recaudador, cedula_cliente, valor, latitud, longitud, fecha, numerdaor_offline, observaciones, ticket;
-    private int online;
+    private String forma_de_pago, user_recaudador, id_recaudador, cedula_cliente, valor, latitud, longitud, fecha, numerdaor_offline, observaciones, ticket;
+    private int online, key;
 
-    public Recaudo(String user_recaudador, String id_recaudador, String cedula_cliente, String valor, String latitud, String longitud, int online, String fecha, String numerador_offline, String observaciones) {
+    public Recaudo(String user_recaudador, String id_recaudador, String cedula_cliente, String valor, String latitud, String longitud, int online, String fecha, String numerador_offline, String observaciones, String fdp) {
         this.user_recaudador = user_recaudador;
         this.id_recaudador = id_recaudador;
         this.cedula_cliente = cedula_cliente;
@@ -15,6 +15,22 @@ public class Recaudo {
         this.fecha = fecha;
         this.numerdaor_offline = numerador_offline;
         this.observaciones = observaciones;
+        this.forma_de_pago = fdp;
+    }
+
+    public Recaudo(String user_recaudador, String id_recaudador, String cedula_cliente, String valor, String latitud, String longitud, int online, String fecha, String numerador_offline, String observaciones, String fdp, int key) {
+        this.user_recaudador = user_recaudador;
+        this.id_recaudador = id_recaudador;
+        this.cedula_cliente = cedula_cliente;
+        this.valor = valor;
+        this.latitud = latitud;
+        this.longitud = longitud;
+        this.online = online;
+        this.fecha = fecha;
+        this.numerdaor_offline = numerador_offline;
+        this.observaciones = observaciones;
+        this.forma_de_pago = fdp;
+        this.key = key;
     }
 
     public String getUser_recaudador() {
@@ -82,7 +98,8 @@ public class Recaudo {
                 "\nlongitud: "+longitud+
                 "\nonline: "+online+
                 "\nfecha: "+fecha+
-                "\nobservacion: "+observaciones;
+                "\nobservacion: "+observaciones+
+                "\nforma_de_pago: "+forma_de_pago;
     }
 
     public String getFecha() {
@@ -115,5 +132,21 @@ public class Recaudo {
 
     public void setTicket(String ticket) {
         this.ticket = ticket;
+    }
+
+    public String getForma_de_pago() {
+        return forma_de_pago;
+    }
+
+    public void setForma_de_pago(String forma_de_pago) {
+        this.forma_de_pago = forma_de_pago;
+    }
+
+    public int getKey() {
+        return key;
+    }
+
+    public void setKey(int key) {
+        this.key = key;
     }
 }

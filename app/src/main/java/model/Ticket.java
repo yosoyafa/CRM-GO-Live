@@ -4,11 +4,11 @@ public class Ticket {
 
     public final static String LINEA = "----------------------------------";
 
-    private String cabecera, fecha, vigD, vigH, valorVigContrato, numRecibo, numContrato, ccCliente, nombCliente, valorRecaudado, observacion, nombAsesor, periodicidad;
+    private String formaDePago, cabecera, fecha, vigD, vigH, valorVigContrato, numRecibo, numContrato, ccCliente, nombCliente, valorRecaudado, observacion, nombAsesor, periodicidad;
 
-    public Ticket(String cabecera, String fecha, String vigD, String vigH, String valorVigContrato, String periodicidad, String numRecibo, String numContrato, String ccCliente, String nombCliente, String valorRecaudado, String observacion, String nombAsesor) {
+    public Ticket(String cabecera, String fecha, String vigD, String vigH, String valorVigContrato, String periodicidad, String numRecibo, String numContrato, String ccCliente, String nombCliente, String valorRecaudado, String observacion, String nombAsesor, String fdp) {
         this.cabecera = cabecera;
-
+        this.formaDePago = fdp;
         this.fecha = fecha;
         this.vigD = vigD;
         this.vigH = vigH;
@@ -24,7 +24,7 @@ public class Ticket {
     }
 
     public String toStringRaw(){
-        return cabecera+","+fecha+","+vigD+","+vigH+","+valorVigContrato+","+periodicidad+","+numRecibo+","+numContrato+","+ccCliente+","+nombCliente+","+valorRecaudado+","+observacion+","+nombAsesor;
+        return cabecera+","+fecha+","+vigD+","+vigH+","+valorVigContrato+","+periodicidad+","+numRecibo+","+numContrato+","+ccCliente+","+nombCliente+","+valorRecaudado+","+formaDePago+","+observacion+","+nombAsesor;
     }
 
     public String toString() {
@@ -34,7 +34,7 @@ public class Ticket {
                 "\nPeriodicidad de Pago: "+periodicidad+
                 "\n  \n" + LINEA +
                 "\n\nRECIBO DE CAJA\n" + numRecibo + "\nContrato Nro: " + numContrato + "\nTipo Registro: Recaudo\n  Pagador\nDto: CC " + ccCliente +
-                "\n " + nombCliente + "\n\nValor Recaudado: $" + valorRecaudado + "\n" + "Forma de Pago: Efectivo\nObservacion: " + observacion +
+                "\n " + nombCliente + "\n\nValor Recaudado: $" + valorRecaudado + "\n" + "Forma de Pago: "+formaDePago+"\nObservacion: " + observacion +
                 "\n   \n   \n" + LINEA + "\nFIRMA DEL CONTRATANTE\n\nAsesor: " + nombAsesor;
         return out;
     }
@@ -141,5 +141,13 @@ public class Ticket {
 
     public void setPeriodicidad(String periodicidad) {
         this.periodicidad = periodicidad;
+    }
+
+    public String getFormaDePago() {
+        return formaDePago;
+    }
+
+    public void setFormaDePago(String formaDePago) {
+        this.formaDePago = formaDePago;
     }
 }

@@ -1,9 +1,9 @@
 package model;
 
 public class Client {
-    private String name, id, total, vigenciaDesde, vigenciaHasta, numeroPoliza, valorContrato, periodicidad, telefono, direccion;
+    private String name, id, total, vigenciaDesde, vigenciaHasta, numeroPoliza, valorContrato, periodicidad, telefono1, telefono2, direccion;
 
-    public Client(String name, String id, String total, String vigenciaDesde, String vigenciaHasta, String numeroPoliza, String valorContrato, String periodicidad) {
+    public Client(String name, String id, String total, String vigenciaDesde, String vigenciaHasta, String numeroPoliza, String valorContrato, String periodicidad, String telefono1, String telefono2, String direccion) {
         this.name = name;
         this.id = id;
         if (total.equals(null)) {
@@ -16,6 +16,9 @@ public class Client {
         this.numeroPoliza = numeroPoliza;
         this.valorContrato = valorContrato;
         this.periodicidad = periodicidad;
+        this.telefono1 = telefono1;
+        this.telefono2 = telefono2;
+        this.direccion = direccion;
     }
 
     public String getName() {
@@ -45,8 +48,6 @@ public class Client {
     public String toString() {
         String out = "Nombre: " + getName() + "\n" +
                 "Cedula: " + getId() + "\n" +
-                "Teléfono: " + getTelefono() + "\n" +
-                "Dirección: " + getDireccion() + "\n" +
                 "Total cartera: $" + getTotal() + "\n"+
                 "Vigencia desde: " + getVigenciaDesde() + "\n" +
                 "Vigencia hasta: " + getVigenciaHasta() + "\n" +
@@ -56,7 +57,7 @@ public class Client {
     }
 
     public String toStringRaw() {
-        String out = name + "," + id + "," + total + "," + vigenciaDesde + "," + vigenciaHasta + "," + numeroPoliza + "," + valorContrato + ","+ periodicidad;
+        String out = name + "," + id + "," + total + "," + vigenciaDesde + "," + vigenciaHasta + "," + numeroPoliza + "," + valorContrato + ","+ periodicidad + "," + telefono1 + "," + telefono2 + "," + direccion;
         return out;
     }
 
@@ -100,19 +101,27 @@ public class Client {
         this.periodicidad = periodicidad;
     }
 
-    public String getTelefono() {
-        return telefono;
-    }
-
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
-    }
-
     public String getDireccion() {
         return direccion;
     }
 
     public void setDireccion(String direccion) {
         this.direccion = direccion;
+    }
+
+    public String getTelefono1() {
+        return telefono1;
+    }
+
+    public void setTelefono1(String telefono1) {
+        this.telefono1 = telefono1;
+    }
+
+    public String getTelefono2() {
+        return telefono2;
+    }
+
+    public void setTelefono2(String telefono2) {
+        this.telefono2 = telefono2;
     }
 }

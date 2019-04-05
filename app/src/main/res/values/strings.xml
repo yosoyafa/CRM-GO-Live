@@ -1,6 +1,27 @@
 <resources>
     <string name="app_name">Recaudos App</string>
 
+    <string-array name="resultado_gestion">
+        <item>Titular se contacta</item>
+        <item>Mensaje con tercero</item>
+        <item>No hay contacto</item>
+        <item>Retiro</item>
+    </string-array>
+
+    <string-array name="medios_de_pago">
+        <item>Efectivo</item>
+        <item>T.Debito</item>
+        <item>T.Credito</item>
+    </string-array>
+
+    <string-array name="tipo_gestion">
+        <item>Llamada saliente</item>
+        <item>Llamada entrante</item>
+        <item>SMS</item>
+        <item>Visita</item>
+        <item>Gestion App</item>
+    </string-array>
+
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>

@@ -65,6 +65,14 @@ public class CardsAdapterRecaudos extends BaseAdapter {
             }
         });
 
+        Button button_gestion = view.findViewById(R.id.button_goto_gestion);
+        button_gestion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goToGestionActivity(client);
+            }
+        });
+
         TextView contrato = view.findViewById(R.id.tvContrato);
         contrato.setText("Contrato: " + client.getNumeroPoliza());
         contrato.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 17);
@@ -88,5 +96,12 @@ public class CardsAdapterRecaudos extends BaseAdapter {
         //System.out.println("---------------------------\nCliente que pasa a pagar:\n"+client.toStringRaw());
         detailsActivity.putExtra("client", client.toStringRaw());
         context.startActivity(detailsActivity);
+    }
+
+    private void goToGestionActivity(Client client) {
+        Intent gestionActivity = new Intent(context, GestionActivity.class);
+        //System.out.println("---------------------------\nCliente que pasa a pagar:\n"+client.toStringRaw());
+        gestionActivity.putExtra("client", client.toStringRaw());
+        context.startActivity(gestionActivity);
     }
 }

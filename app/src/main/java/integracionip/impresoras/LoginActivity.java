@@ -17,6 +17,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.karan.churi.PermissionManager.PermissionManager;
+
 import org.json.JSONObject;
 
 import utils.ConexionHTTP;
@@ -33,6 +35,7 @@ public class LoginActivity extends AppCompatActivity implements LocationListener
     private LocationManager locationManager;
     private String latitude, longitude;
     private Toolbar toolbar;
+    private PermissionManager permissionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +45,12 @@ public class LoginActivity extends AppCompatActivity implements LocationListener
         SharedPreferences.Editor edit = sharedPreferences.edit();
         toolbar = findViewById(R.id.toolbar_login);
         setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+        //getSupportActionBar().setTitle("Recaudos App");
+        permissions();
         if (sharedPreferences.getBoolean("logged", false)) {
             goMainScreen();
         } else {
@@ -71,6 +80,11 @@ public class LoginActivity extends AppCompatActivity implements LocationListener
         }
         android.location.Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         onLocationChanged(location);
+    }
+
+    private void permissions() {
+        permissionManager = new PermissionManager() { };
+        permissionManager.checkAndRequestPermissions(this);
     }
 
     private void login() {

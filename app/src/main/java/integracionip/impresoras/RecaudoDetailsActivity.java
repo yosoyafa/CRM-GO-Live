@@ -20,9 +20,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,18 +47,17 @@ import utils.ConexionHTTP;
 import utils.LogicDataBase;
 import utils.PrefixEditText;
 
-public class RecaudoDetailsActivity extends AppCompatActivity implements PaymentDialog.ExampleDialogListener, LocationListener, GestionDialog.ExampleDialogListener {
+public class RecaudoDetailsActivity extends AppCompatActivity implements PaymentDialog.ExampleDialogListener, LocationListener {
 
     private Client client;
-    private TextView tvNombre, tvId, tvTotal, tvPoliza, tvTotalContrato;
+    private TextView tvNombre, tvId, tvTotal, tvPoliza, tvTotalContrato, tvVigD, tvVigH, tvVigContr, tvPeriod;
     private EditText etObservaciones;
     private FloatingActionButton fabPrint;
     private PrefixEditText etValorAPagar;
     private Button btnRecaudo;
     private boolean recaudoDone;
-    private CheckBox checkBox;
     private SharedPreferences sharedPreferences;
-    private String recibo, optionGestionCartera;
+    private String recibo;
     private BluetoothAdapter bluetoothAdapter;
     private BluetoothSocket bluetoothSocket;
     private BluetoothDevice bluetoothDevice;
@@ -70,15 +71,22 @@ public class RecaudoDetailsActivity extends AppCompatActivity implements Payment
     private String valorrrr, lat, lon;
     private LocationManager locationManager;
     private Toolbar toolbar;
+    private Spinner spinnerMedioDePago;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recaudo_details);
         valorrrr = "";
+        spinnerMedioDePago = findViewById(R.id.spinner_mediodepago);
+        ArrayAdapter<CharSequence> adapter1 = ArrayAdapter.createFromResource(this,
+                R.array.medios_de_pago, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        spinnerMedioDePago.setAdapter(adapter1);
         fabPrint = findViewById(R.id.fabPrint);
         fabPrint.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_print_white_24dp));
-        checkBox = findViewById(R.id.checkBox);
         tvNombre = findViewById(R.id.tv_nombre);
         tvId = findViewById(R.id.tv_id);
         tvTotal = findViewById(R.id.tv_total);
@@ -87,6 +95,10 @@ public class RecaudoDetailsActivity extends AppCompatActivity implements Payment
         etValorAPagar = findViewById(R.id.et_valor_a_pagar);
         tvPoliza = findViewById(R.id.tv_poliza);
         tvTotalContrato = findViewById(R.id.tv_valor_contrato);
+        tvVigD = findViewById(R.id.tv_vigd);
+        tvVigH = findViewById(R.id.tv_vigh);
+        tvVigContr = findViewById(R.id.tv_vigcontr);
+        tvPeriod = findViewById(R.id.tv_periodicidad);
         sharedPreferences = getSharedPreferences("Session", Context.MODE_PRIVATE);
         setOnClickButtons();
         configClient();
@@ -118,7 +130,7 @@ public class RecaudoDetailsActivity extends AppCompatActivity implements Payment
     private void configClient() {
         String clt = getIntent().getStringExtra("client");
         String[] cli = clt.split(",");
-        client = new Client(cli[0],cli[1],cli[2],cli[3],cli[4],cli[5],cli[6],cli[7]);
+        client = new Client(cli[0],cli[1],cli[2],cli[3],cli[4],cli[5],cli[6],cli[7],cli[8],cli[9],cli[10]);
 
         tvNombre.setText(client.getName());
         tvNombre.setTextSize(16);
@@ -126,28 +138,10 @@ public class RecaudoDetailsActivity extends AppCompatActivity implements Payment
         tvTotal.setText("Total cartera: $"+client.getTotal());
         tvPoliza.setText("Contrato: "+client.getNumeroPoliza());
         tvTotalContrato.setText("Valor contrato: $"+client.getValorContrato());
-        //tvValorAPagar.setText("Valor a pagar: ");
-    }
-
-    public void onCheckboxClicked(View view) {
-        boolean checked = ((CheckBox) view).isChecked();
-        switch(view.getId()) {
-            case R.id.checkBox:
-                if (checked){
-
-                    etValorAPagar.setEnabled(false);
-                    openDialogGestion();
-                }else{
-                    etValorAPagar.setEnabled(true);
-                }
-                break;
-        }
-    }
-
-    private void openDialogGestion() {
-        GestionDialog gestionDialog = new GestionDialog();
-        Bundle args = new Bundle();
-        gestionDialog.show(getSupportFragmentManager(), "example dialog");
+        tvVigD.setText("Vigencia desde: "+client.getVigenciaDesde());
+        tvVigH.setText("Vigencia hasta: "+client.getVigenciaHasta());
+        tvVigContr.setText("Valor Vig. Contrato: $"+client.getValorContrato());
+        tvPeriod.setText("Periodicidad: "+client.getPeriodicidad());
     }
 
     @Override
@@ -156,7 +150,6 @@ public class RecaudoDetailsActivity extends AppCompatActivity implements Payment
         if (item.getItemId() == android.R.id.home) {
             finish(); // close this activity and return to preview activity (if there is any)
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -166,6 +159,7 @@ public class RecaudoDetailsActivity extends AppCompatActivity implements Payment
             public void onClick(View view) {
                 if(recaudoDone){
                     try{
+                        System.out.println(recibo);
                         findBluetoothDevice();
                         openBluetoothPrinter();
                         printData(recibo);
@@ -185,31 +179,19 @@ public class RecaudoDetailsActivity extends AppCompatActivity implements Payment
         btnRecaudo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                if(checkBox.isChecked()){
-                    if(!etObservaciones.getText().toString().isEmpty()){
-                        valorrrr = "gestion,"+optionGestionCartera;
-                        confirmPayment(valorrrr);
-                    }else{
+                String value = etValorAPagar.getText().toString();
+                if (!value.isEmpty() && Integer.parseInt(value) != 0) {
+                    if (!etObservaciones.getText().toString().isEmpty()) {
+                        valorrrr = value;
+                        confirmPayment(value);
+                    } else {
                         Toast.makeText(getApplicationContext(), "Ingresa una observación",
                                 Toast.LENGTH_LONG).show();
                     }
-                }else{
-                    String value = etValorAPagar.getText().toString();
-                    if(!value.isEmpty() && Integer.parseInt(value)!=0){
-                        if(!etObservaciones.getText().toString().isEmpty()){
-                            valorrrr = value;
-                            confirmPayment(value);
-                        }else{
-                            Toast.makeText(getApplicationContext(), "Ingresa una observación",
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    }else{
-                        Toast.makeText(getApplicationContext(), "Ingresa un valor a pagar",
-                                Toast.LENGTH_LONG).show();
-                    }
+                } else {
+                    Toast.makeText(getApplicationContext(), "Ingresa un valor a pagar",
+                            Toast.LENGTH_LONG).show();
                 }
-
             }
         });
     }
@@ -227,7 +209,7 @@ public class RecaudoDetailsActivity extends AppCompatActivity implements Payment
             PaymentDialog paymentDialog = new PaymentDialog();
             Bundle args = new Bundle();
             args.putString("type", "recaudo");
-            args.putString("info", client.toString() + "\n  \n" + "Observaciones: " + etObservaciones.getText().toString() + "\nValor a pagar: $" + value);
+            args.putString("info", client.toString() + "\n  \n" + "Observaciones: " + etObservaciones.getText().toString() + "\nValor a pagar: $" + value + "\nForma de pago: "+ spinnerMedioDePago.getSelectedItem().toString());
             paymentDialog.setArguments(args);
             paymentDialog.show(getSupportFragmentManager(), "example dialog");
         }
@@ -245,7 +227,7 @@ public class RecaudoDetailsActivity extends AppCompatActivity implements Payment
         if(observaciones.isEmpty()){
             observaciones = "-";
         }
-        conexion.recaudo(user, lat, lon, cedula, value, id,fecha,"-", observaciones);
+        conexion.recaudo(user, lat, lon, cedula, value, id,fecha,"-", observaciones, spinnerMedioDePago.getSelectedItem().toString());
         while (!conexion.isFinishProcess()) {
             try {
                 Thread.sleep(100);
@@ -267,7 +249,7 @@ public class RecaudoDetailsActivity extends AppCompatActivity implements Payment
                     generarTicket(fecha, observaciones, idRecaudo);
                     Toast.makeText(getApplicationContext(), "Recaudo exitoso, proceda a imprimir el recibo",
                             Toast.LENGTH_LONG).show();
-                    Recaudo recOn = new Recaudo(user,id,cedula,value,lat,lon,1,fecha,"-", observaciones);
+                    Recaudo recOn = new Recaudo(user,id,cedula,value,lat,lon,1,fecha,"-", observaciones,spinnerMedioDePago.getSelectedItem().toString());
                     db.addRecaudo(recOn);
                     System.out.println("-----ESTE ES EL RECAUDO QUE METIO A LA BASE DE DATOS------\n"+recOn.toString());
                     System.out.println("-------ESTA ES LA TABLA DE RECAUDOS RECIEN INSERTADO EL RECAUDO QUE SE MOSTRO ARRINA------\n"+db.getTableAsString("recaudos"));
@@ -285,7 +267,7 @@ public class RecaudoDetailsActivity extends AppCompatActivity implements Payment
             //RECAUDO OFFLINE
             System.out.println("-----RECAUDO OFFLINE------");
             int numerador_rc = Integer.parseInt(sharedPreferences.getString("numerador_rc", "-"));
-            Recaudo recOff = new Recaudo(user,id,cedula,value,lat,lon,0,fecha,numerador_rc+"", observaciones);
+            Recaudo recOff = new Recaudo(user,id,cedula,value,lat,lon,0,fecha,numerador_rc+"", observaciones, spinnerMedioDePago.getSelectedItem().toString());
             db.addRecaudo(recOff);
             System.out.println("-----ESTE ES EL RECAUDO QUE METIO A LA BASE DE DATOS------\n"+recOff.toString());
             numerador_rc++;
@@ -294,7 +276,7 @@ public class RecaudoDetailsActivity extends AppCompatActivity implements Payment
             editor.commit();
             recaudoDone = true;
             blockButtonRecaudo();
-            generarTicket(fecha, observaciones, sharedPreferences.getString("iniciales_numerador","-")+numerador_rc);
+            generarTicket(fecha, observaciones, sharedPreferences.getString("iniciales_numerador","-")+"-"+numerador_rc+" (offline)");
             Toast.makeText(getApplicationContext(), "Recaudo OFFLINE exitoso, proceda a imprimir el recibo.\nRecuerda sincronizar cuando tengas acceso a internet.",
                     Toast.LENGTH_LONG).show();
             System.out.println("-------ESTA ES LA TABLA DE RECAUDOS RECIEN INSERTADO EL RECAUDO QUE SE MOSTRO ARRINA------\n"+db.getTableAsString("recaudos"));
@@ -309,7 +291,7 @@ public class RecaudoDetailsActivity extends AppCompatActivity implements Payment
         String date1 = date[0].replace("-","/");
 
         Ticket ticket = new Ticket(sharedPreferences.getString("cabecera","-"),date1,client.getVigenciaDesde(),client.getVigenciaHasta(),client.getValorContrato(),
-                client.getPeriodicidad(),numRecibo,client.getNumeroPoliza(),client.getId(),client.getName(),valorrrr,observaciones,sharedPreferences.getString("name","-"));
+                client.getPeriodicidad(),numRecibo,client.getNumeroPoliza(),client.getId(),client.getName(),valorrrr,observaciones,sharedPreferences.getString("name","-"), spinnerMedioDePago.getSelectedItem().toString());
         db.addTicket(ticket);
         recibo = ticket.toString();
     }
@@ -353,7 +335,7 @@ public class RecaudoDetailsActivity extends AppCompatActivity implements Payment
 
     }
 
-    void openBluetoothPrinter() throws IOException {
+    void openBluetoothPrinter() {
         try{
 
             //Standard uuid from string //
@@ -427,7 +409,7 @@ public class RecaudoDetailsActivity extends AppCompatActivity implements Payment
     }
 
     // Printing Text to Bluetooth Printer //
-    void printData(String msg) throws  IOException{
+    void printData(String msg) {
         try{
             msg+="\n";
             //msg = CHAR_ESC+msg;
@@ -485,20 +467,5 @@ public class RecaudoDetailsActivity extends AppCompatActivity implements Payment
     @Override
     public void onProviderDisabled(String s) {
 
-    }
-
-    public EditText getEtObservaciones() {
-        return etObservaciones;
-    }
-
-    public void setEtObservaciones(EditText etObservaciones) {
-        this.etObservaciones = etObservaciones;
-    }
-
-    @Override
-    public void applyTextsGestion(String selected) {
-        optionGestionCartera = selected;
-//        Toast.makeText(getApplicationContext(), selected,
-//                Toast.LENGTH_LONG).show();
     }
 }

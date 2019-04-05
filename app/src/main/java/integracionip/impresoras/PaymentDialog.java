@@ -25,7 +25,25 @@ public class PaymentDialog extends AppCompatDialogFragment {
         resumen = getArguments().getString("info");
         type = getArguments().getString("type");
 
-        if(type.equals("gestion")){
+        if(type.equals("config")){
+
+            builder.setView(view)
+                    .setTitle("Configuración de cliente")
+                    .setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                        }
+                    })
+                    .setPositiveButton("GUARDAR", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            listener.applyTexts();
+                            dismiss();
+                        }
+                    });
+
+        } else if(type.equals("gestion")){
             builder.setView(view)
                     .setTitle("Gestión de cartera")
                     .setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {
@@ -34,7 +52,7 @@ public class PaymentDialog extends AppCompatDialogFragment {
 
                         }
                     })
-                    .setPositiveButton("RECAUDAR", new DialogInterface.OnClickListener() {
+                    .setPositiveButton("GUARDAR", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             listener.applyTexts();
@@ -77,7 +95,5 @@ public class PaymentDialog extends AppCompatDialogFragment {
     public interface ExampleDialogListener {
         void applyTexts();
     }
-
-
 
 }

@@ -7,8 +7,8 @@
     android:layout_height="wrap_content">
 
     <android.support.v7.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="145dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
@@ -20,17 +20,36 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <Button
-                android:id="@+id/button_goto_contrato"
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="35dp"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"
-                android:layout_marginEnd="9dp"
-                android:layout_marginBottom="10dp"
-                android:layout_weight="1"
-                android:background="@drawable/my_button_bg"
-                android:text="IR" />
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="124dp"
+                android:layout_marginTop="106dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/button_goto_gestion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="35dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="9dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/my_button_bg"
+                    android:text="gestión" />
+
+                <Button
+                    android:id="@+id/button_goto_contrato"
+                    android:layout_width="wrap_content"
+                    android:layout_height="35dp"
+                    android:layout_marginEnd="9dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/my_button_bg"
+                    android:text="pagar" />
+            </LinearLayout>
+
         </RelativeLayout>
 
         <LinearLayout

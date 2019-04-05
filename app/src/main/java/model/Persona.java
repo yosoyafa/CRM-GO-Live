@@ -1,17 +1,22 @@
 package model;
 
-import java.util.ArrayList;
-
 public class Persona {
-    private String nombre, cedula, telefono, direccion;
-    private ArrayList<Client> clients;
+    private String nombre, cedula, telefono1, telefono2, direccion;
 
-    public Persona(String nombre, String cedula, String telefono, String direccion, ArrayList<Client> clients) {
+    public Persona(String nombre, String cedula, String direccion, String telefono1, String telefono2) {
         this.nombre = nombre;
         this.cedula = cedula;
-        this.telefono = telefono;
+        this.telefono1 = telefono1;
+        this.telefono2 = telefono2;
         this.direccion = direccion;
-        this.clients = clients;
+    }
+
+    public String toString(){
+        return "Nombre: "+nombre+
+                "\nCedula: "+cedula+
+                "\ntel1: "+telefono1+
+                "\ntel2: "+telefono2+
+                "\ndir: "+direccion;
     }
 
     public String getNombre() {
@@ -30,14 +35,6 @@ public class Persona {
         this.cedula = cedula;
     }
 
-    public String getTelefono() {
-        return telefono;
-    }
-
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
-    }
-
     public String getDireccion() {
         return direccion;
     }
@@ -46,11 +43,19 @@ public class Persona {
         this.direccion = direccion;
     }
 
-    public ArrayList<Client> getClients() {
-        return clients;
+    public String getTelefono1() {
+        return telefono1;
     }
 
-    public void setClients(ArrayList<Client> clients) {
-        this.clients = clients;
+    public void setTelefono1(String telefono1) {
+        this.telefono1 = telefono1;
+    }
+
+    public String getTelefono2() {
+        return telefono2;
+    }
+
+    public void setTelefono2(String telefono2) {
+        this.telefono2 = telefono2;
     }
 }

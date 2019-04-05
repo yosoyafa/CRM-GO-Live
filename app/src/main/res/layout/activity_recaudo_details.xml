@@ -29,17 +29,20 @@
             android:layout_height="54dp"
             android:layout_alignEnd="@+id/cardview_pago"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="15dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="7dp"
             android:clickable="true"
             app:backgroundTint="@color/colorPrimary"
             app:fabSize="normal" />
 
         <android.support.v7.widget.CardView
             android:id="@+id/cardview_pago"
-            android:layout_width="299dp"
-            android:layout_height="180dp"
+            android:layout_width="300dp"
+            android:layout_height="198dp"
             android:layout_below="@+id/cardview_observaciones"
-            android:layout_centerHorizontal="true"
+            android:layout_alignStart="@+id/cardview_observaciones"
+            android:layout_marginStart="-1dp"
+            android:layout_marginTop="-21dp"
             card_view:cardCornerRadius="6dp"
             card_view:cardElevation="10dp"
             card_view:cardUseCompatPadding="true">
@@ -56,24 +59,12 @@
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="19dp"
                     android:layout_weight="1"
+                    android:digits="0123456789"
                     android:ems="10"
                     android:hint="Valor a pagar"
                     android:inputType="numberDecimal"
-                    android:digits="0123456789"
                     android:maxLines="1"
                     android:tag="$ " />
-
-                <CheckBox
-                    android:id="@+id/checkBox"
-                    android:layout_width="215dp"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/et_valor_a_pagar"
-                    android:layout_alignStart="@+id/et_valor_a_pagar"
-                    android:layout_marginStart="0dp"
-                    android:layout_marginTop="2dp"
-                    android:onClick="onCheckboxClicked"
-                    android:text="Gestión de Cartera"
-                    tools:layout_editor_absoluteY="68dp" />
 
                 <Button
                     android:id="@+id/button_recaudo"
@@ -86,6 +77,29 @@
                     android:layout_weight="1"
                     android:background="@drawable/my_button_bg"
                     android:text="Recaudar" />
+
+                <Spinner
+                    android:id="@+id/spinner_mediodepago"
+                    android:layout_width="128dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/et_valor_a_pagar"
+                    android:layout_alignStart="@+id/et_valor_a_pagar"
+                    android:layout_alignEnd="@+id/et_valor_a_pagar"
+                    android:layout_marginStart="99dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="-12dp" />
+
+                <TextView
+                    android:id="@+id/tv_mediodepago"
+                    android:layout_width="108dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/et_valor_a_pagar"
+                    android:layout_alignStart="@+id/et_valor_a_pagar"
+                    android:layout_alignEnd="@+id/et_valor_a_pagar"
+                    android:layout_marginStart="-1dp"
+                    android:layout_marginTop="19dp"
+                    android:layout_marginEnd="108dp"
+                    android:text="Medio de pago:" />
             </RelativeLayout>
 
         </android.support.v7.widget.CardView>
@@ -95,7 +109,9 @@
             android:layout_width="299dp"
             android:layout_height="132dp"
             android:layout_below="@+id/cardview_datos"
-            android:layout_centerHorizontal="true"
+            android:layout_alignStart="@+id/cardview_datos"
+            android:layout_marginStart="-1dp"
+            android:layout_marginTop="-22dp"
             card_view:cardCornerRadius="6dp"
             card_view:cardElevation="10dp"
             card_view:cardUseCompatPadding="true">
@@ -120,9 +136,11 @@
         <android.support.v7.widget.CardView
             android:id="@+id/cardview_datos"
             android:layout_width="297dp"
-            android:layout_height="160dp"
+            android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="0dp"
             card_view:cardCornerRadius="6dp"
             card_view:cardElevation="10dp"
             card_view:cardUseCompatPadding="true">
@@ -130,6 +148,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_alignEnd="@+id/cardview_datos"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
@@ -161,6 +180,30 @@
 
                 <TextView
                     android:id="@+id/tv_total"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="TextView" />
+
+                <TextView
+                    android:id="@+id/tv_vigd"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="TextView" />
+
+                <TextView
+                    android:id="@+id/tv_vigh"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="TextView" />
+
+                <TextView
+                    android:id="@+id/tv_vigcontr"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="TextView" />
+
+                <TextView
+                    android:id="@+id/tv_periodicidad"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="TextView" />
