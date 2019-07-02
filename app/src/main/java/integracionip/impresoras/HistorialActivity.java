@@ -45,6 +45,7 @@ public class HistorialActivity extends AppCompatActivity {
         tickets = new ArrayList<Ticket>();
         for (int a = 0; a < numTickets; a++) {
             String clt = getIntent().getStringExtra("ticket" + a);
+            System.out.println(clt);
             String[] cli = clt.split(",");
             Ticket ticket = new Ticket(cli[0], cli[1], cli[2], cli[3], cli[4], cli[5], cli[6], cli[7], cli[8], cli[9], cli[10], cli[11], cli[12], cli[13]);
             tickets.add(ticket);

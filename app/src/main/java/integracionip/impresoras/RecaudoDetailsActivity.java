@@ -111,6 +111,8 @@ public class RecaudoDetailsActivity extends AppCompatActivity implements Payment
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
+        lat = "-";
+        lon = "-";
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -216,7 +218,7 @@ public class RecaudoDetailsActivity extends AppCompatActivity implements Payment
     }
 
     private boolean pay(String value) {
-        ConexionHTTP conexion = new ConexionHTTP();
+        ConexionHTTP conexion = new ConexionHTTP(sharedPreferences.getString("sede","-"));
         String user = sharedPreferences.getString("user", "-");
         System.out.println("valor: " + value);
         String cedula = client.getId();
@@ -290,8 +292,11 @@ public class RecaudoDetailsActivity extends AppCompatActivity implements Payment
         String[] date = fecha.split(",");
         String date1 = date[0].replace("-","/");
 
-        Ticket ticket = new Ticket(sharedPreferences.getString("cabecera","-"),date1,client.getVigenciaDesde(),client.getVigenciaHasta(),client.getValorContrato(),
-                client.getPeriodicidad(),numRecibo,client.getNumeroPoliza(),client.getId(),client.getName(),valorrrr,observaciones,sharedPreferences.getString("name","-"), spinnerMedioDePago.getSelectedItem().toString());
+        Ticket ticket = new Ticket(sharedPreferences.getString("cabecera","-"),date1,client.getVigenciaDesde(),
+                client.getVigenciaHasta(),client.getValorContrato(),  client.getPeriodicidad(),numRecibo,
+                client.getNumeroPoliza(),client.getId(),client.getName(),valorrrr,observaciones,
+                sharedPreferences.getString("name","-"), spinnerMedioDePago.getSelectedItem().toString());
+
         db.addTicket(ticket);
         recibo = ticket.toString();
     }
@@ -445,13 +450,18 @@ public class RecaudoDetailsActivity extends AppCompatActivity implements Payment
     public void applyTexts() {
         if(pay(valorrrr)){
             etValorAPagar.setEnabled(false);
+            etObservaciones.setEnabled(false);
         }
     }
 
     @Override
     public void onLocationChanged(Location location) {
-        lon = location.getLongitude()+"";
-        lat = location.getLatitude()+"";
+        try {
+            lon = location.getLongitude() + "";
+            lat = location.getLatitude() + "";
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override

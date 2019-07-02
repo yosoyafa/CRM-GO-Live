@@ -36,4 +36,15 @@
     </string>
     <string name="ok">OK</string>
     <string name="cancel">Cancelar</string>
+
+    <!-- LINKS -->
+    <string name="serverPrueba">pruebas.crmserfuncoop.com</string>
+    <string name="server">https://ws.crmolivosvillavicencio.com/app/</string>
+
+    <!-- XML -->
+    <string name="descargarCartera">Descargar Cartera</string>
+    <string name="buscarCliente">Buscar Cliente</string>
+    <string name="sincronizar">Sincronizar</string>
+    <string name="recibosAntiguos">Recibos Antiguos</string>
+
 </resources>

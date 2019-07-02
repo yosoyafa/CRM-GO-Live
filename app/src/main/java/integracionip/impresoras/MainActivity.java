@@ -1,20 +1,16 @@
 package integracionip.impresoras;
 
-import android.Manifest;
-import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -23,22 +19,17 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.karan.churi.PermissionManager.PermissionManager;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
-import java.util.List;
 
 import model.Client;
 import model.Edicion;
@@ -56,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements SearchDialog.Exam
     private Toolbar toolbar;
     private LogicDataBase db;
     private CardView cardSearch, cardHistory, cardDownload, cardSync, cardClients;
+    private ProgressDialog progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,13 +81,61 @@ public class MainActivity extends AppCompatActivity implements SearchDialog.Exam
         cardDownload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                downloadFile();
+                progress = ProgressDialog.show(MainActivity.this, "Descargando cartera",
+                        "Se están descagando los datos de tus clientes", true);
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run()
+                    {
+                        try {
+                            int a = downloadFile();
+                            if(a==1){
+                                MainActivity.this.runOnUiThread(new Runnable() {
+                                    public void run() {
+                                        Toast.makeText(MainActivity.this, "Descarga completa",
+                                                Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                            }else if(a==2){
+                                MainActivity.this.runOnUiThread(new Runnable() {
+                                    public void run() {
+                                        Toast.makeText(MainActivity.this, "ERROR JSON",
+                                                Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                            }else if(a==3){
+                                MainActivity.this.runOnUiThread(new Runnable() {
+                                    public void run() {
+                                        Toast.makeText(MainActivity.this, "No se pudo realizar la descarga, revisa tu conexión a internet",
+                                                Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                            }
+                        }catch(Exception e){
+                            e.printStackTrace();
+                        }
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run()
+                            {
+                                progress.dismiss();
+                            }
+                        });
+                    }
+                }).start();
             }
         });
         cardSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                search("search");
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        search("search");
+                    }
+                }).start();
             }
         });
         cardSync.setOnClickListener(new View.OnClickListener() {
@@ -108,7 +148,6 @@ public class MainActivity extends AppCompatActivity implements SearchDialog.Exam
             @Override
             public void onClick(View view) {
                 historialTickets();
-                //search("historial");
             }
         });
     }
@@ -128,8 +167,8 @@ public class MainActivity extends AppCompatActivity implements SearchDialog.Exam
                 Toast.LENGTH_LONG).show();
     }
 
-    private void downloadFile() {
-        ConexionHTTP conexion = new ConexionHTTP();
+    private int downloadFile() {
+        ConexionHTTP conexion = new ConexionHTTP(sharedPreferences.getString("sede","-"));
         conexion.downloadFile(sharedPreferences.getString("id", "-"));
         while (!conexion.isFinishProcess()) {
             try {
@@ -139,11 +178,9 @@ public class MainActivity extends AppCompatActivity implements SearchDialog.Exam
             }
         }
         JSONArray respuesta = conexion.getResponseArray();
-
         if (respuesta != null) {
             db.resetClients();
             try {
-
                 for (int a = 0; a < respuesta.length(); a++) {
                     JSONObject client = respuesta.getJSONObject(a);
                     String name = client.getString("name");
@@ -172,18 +209,19 @@ public class MainActivity extends AppCompatActivity implements SearchDialog.Exam
                     Client cliente = new Client(name, id, total, vigencia_desde, vigencia_hasta, numeropoliza, valorcontrato, periodicidad, tel1, tel2, direccion);
                     db.addClient(cliente);
                 }
-
-                //}
-                Toast.makeText(this, "Descarga completa",
-                        Toast.LENGTH_LONG).show();
+                //Toast.makeText(this, "Descarga completa",
+                //        Toast.LENGTH_LONG).show();
+                return 1;
             } catch (Exception e) {
                 e.printStackTrace();
-                Toast.makeText(this, "ERROR JSON",
-                        Toast.LENGTH_LONG).show();
+                //Toast.makeText(this, "ERROR JSON",
+                //        Toast.LENGTH_LONG).show();
+                return 2;
             }
         } else {
-            Toast.makeText(this, "No se pudo realizar la descarga, revisa tu conexión a internet",
-                    Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "No se pudo realizar la descarga, revisa tu conexión a internet",
+            //        Toast.LENGTH_LONG).show();
+            return 3;
         }
     }
 
@@ -212,7 +250,7 @@ public class MainActivity extends AppCompatActivity implements SearchDialog.Exam
 
     private ArrayList<Client> searchClientOnline(String cc) {
         ArrayList<Client> clients = new ArrayList<Client>();
-        ConexionHTTP conexionHTTP = new ConexionHTTP();
+        ConexionHTTP conexionHTTP = new ConexionHTTP(sharedPreferences.getString("sede","-"));
         conexionHTTP.buscarCCenCartera(sharedPreferences.getString("id", "-"), cc);
         while (!conexionHTTP.isFinishProcess()) {
             try {
@@ -221,40 +259,43 @@ public class MainActivity extends AppCompatActivity implements SearchDialog.Exam
                 e.printStackTrace();
             }
         }
+
         JSONArray respuesta = conexionHTTP.getResponseArray();
-        try {
-            for (int a = 0; a < respuesta.length(); a++) {
-                JSONObject client = respuesta.getJSONObject(a);
-                String name = client.getString("name");
-                String id = client.getString("numero_documento");
-                String total = client.getString("totalcartera");
-                String vigencia_desde = client.getString("vigenciadesde");
-                String vigencia_hasta = client.getString("vigenciahasta");
-                String numeropoliza = client.getString("numeropoliza");
-                String valorcontrato = client.getString("valorcontrato");
-                String periodicidad = client.getString("periodicidad1");
-                String tel1 = client.getString("celular1");
-                String tel2 = client.getString("celular2");
-                String direccion = client.getString("direccion");
-                if (total == null) {
-                    total = "0";
+        if(respuesta != null) {
+            try {
+                for (int a = 0; a < respuesta.length(); a++) {
+                    JSONObject client = respuesta.getJSONObject(a);
+                    String name = client.getString("name");
+                    String id = client.getString("numero_documento");
+                    String total = client.getString("totalcartera");
+                    String vigencia_desde = client.getString("vigenciadesde");
+                    String vigencia_hasta = client.getString("vigenciahasta");
+                    String numeropoliza = client.getString("numeropoliza");
+                    String valorcontrato = client.getString("valorcontrato");
+                    String periodicidad = client.getString("periodicidad1");
+                    String tel1 = client.getString("celular1");
+                    String tel2 = client.getString("celular2");
+                    String direccion = client.getString("direccion");
+                    if (total == null) {
+                        total = "0";
+                    }
+                    if (tel1 == null || tel1.equals("null")) {
+                        tel1 = "";
+                    }
+                    if (tel2 == null || tel2.equals("null")) {
+                        tel2 = "";
+                    }
+                    if (direccion == null || direccion.equals("null")) {
+                        direccion = "";
+                    }
+                    Client cliente = new Client(name, id, total, vigencia_desde, vigencia_hasta, numeropoliza, valorcontrato, periodicidad, tel1, tel2, direccion);
+                    clients.add(cliente);
+                    System.out.println(cliente.toStringRaw());
+                    db.addClient(cliente);
                 }
-                if(tel1 == null || tel1.equals("null")){
-                    tel1 = "";
-                }
-                if(tel2 == null || tel2.equals("null")){
-                    tel2 = "";
-                }
-                if(direccion == null || direccion.equals("null")){
-                    direccion = "";
-                }
-                Client cliente = new Client(name, id, total, vigencia_desde, vigencia_hasta, numeropoliza, valorcontrato, periodicidad, tel1, tel2, direccion);
-                clients.add(cliente);
-                System.out.println(cliente.toStringRaw());
-                db.addClient(cliente);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
         return clients;
     }
@@ -316,14 +357,13 @@ public class MainActivity extends AppCompatActivity implements SearchDialog.Exam
         if(b1 || b2 || b3){
             showSyncDialog(successRec, recaudos2sync.size(), successGes, gestiones2sync.size(), successEdit, ediciones2sync.size());
         }else{
-            Toast.makeText(this, "No hay acciones offline por sincronizar",
-                    Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "No hay acciones offline por sincronizar", Toast.LENGTH_LONG).show();
         }
     }
 
     private boolean sync1edit(Edicion edit) {
         //System.out.println(rec.toString());
-        ConexionHTTP conexion = new ConexionHTTP();
+        ConexionHTTP conexion = new ConexionHTTP(sharedPreferences.getString("sede","-"));
         conexion.edicion(edit.getUser(),edit.getId(),edit.getNombre(),edit.getCedula(),edit.getTel1viejo(),edit.getTel1nuevo(),edit.getTel2viejo(),edit.getTel2nuevo(),edit.getDireccionVieja(),edit.getDireccionNueva(),edit.getFecha(),edit.getLat(),edit.getLon());
         while (!conexion.isFinishProcess()) {
             try {
@@ -356,7 +396,7 @@ public class MainActivity extends AppCompatActivity implements SearchDialog.Exam
 
     private boolean sync1gestion(Gestion ges) {
         //System.out.println(rec.toString());
-        ConexionHTTP conexion = new ConexionHTTP();
+        ConexionHTTP conexion = new ConexionHTTP(sharedPreferences.getString("sede","-"));
         conexion.gestion(ges.getTipoGestion(), ges.getIdUsuario(), ges.getDocumento(), ges.getFecha(), ges.getLatitud(), ges.getLongitud(), ges.getAcuerdoPago()+"", ges.getFechaAcuerdo(), ges.getValorAcuerdo(), ges.getDescripcion(), ges.getResultadoGestion(), sharedPreferences.getString("user","-"));
         while (!conexion.isFinishProcess()) {
             try {
@@ -387,7 +427,7 @@ public class MainActivity extends AppCompatActivity implements SearchDialog.Exam
 
     private boolean sync1recaudo(Recaudo rec) {
         //System.out.println(rec.toString());
-        ConexionHTTP conexion = new ConexionHTTP();
+        ConexionHTTP conexion = new ConexionHTTP(sharedPreferences.getString("sede","-"));
         conexion.recaudo(rec.getUser_recaudador(), rec.getLatitud(), rec.getLongitud(), rec.getCedula_cliente(), rec.getValor(), rec.getId_recaudador(), rec.getFecha(), rec.getNumerdaor_offline(), rec.getObservaciones(), rec.getForma_de_pago());
         while (!conexion.isFinishProcess()) {
             try {
@@ -417,10 +457,17 @@ public class MainActivity extends AppCompatActivity implements SearchDialog.Exam
     }
 
     private void showSyncDialog(int successRecaudos, int totalRecaudos, int successGestiones, int totalGestiones, int successEdits, int totalEdits) {
-
-        String msg = "\n(" + successRecaudos + "/" + totalRecaudos + ") recuados sincronizados";
-        msg = msg + "\n(" + successGestiones + "/" + totalGestiones + ") gestiones sincronizadas";
-        msg = msg + "\n(" + successEdits + "/" + totalEdits + ") ediciones sincronizadas";
+        String msg = "";
+        if(totalRecaudos != 0){
+            msg = "\n(" + successRecaudos + "/" + totalRecaudos + ") recuados sincronizados";
+        }if(totalGestiones != 0){
+            msg = msg + "\n(" + successGestiones + "/" + totalGestiones + ") gestiones sincronizadas";
+        }if(totalEdits != 0){
+            msg = msg + "\n(" + successEdits + "/" + totalEdits + ") ediciones sincronizadas";
+        }
+//        msg = "\n(" + successRecaudos + "/" + totalRecaudos + ") recuados sincronizados";
+//        msg = msg + "\n(" + successGestiones + "/" + totalGestiones + ") gestiones sincronizadas";
+//        msg = msg + "\n(" + successEdits + "/" + totalEdits + ") ediciones sincronizadas";
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Sincronización de acciones offline");
         final TextView tv = new TextView(this);

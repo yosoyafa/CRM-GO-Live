@@ -81,7 +81,25 @@ public class CardsAdapterTickets extends BaseAdapter {
         button_pagar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                printTicket(ticket);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run()
+                    {
+                        try {
+                            int in = printTicket(ticket);
+                            if(in == 0){
+                                context.runOnUiThread(new Runnable() {
+                                    public void run() {
+                                        Toast.makeText(context, "Problemas con conexión a la impresora",
+                                                Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                            }
+                        }catch(Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
             }
         });
 
@@ -115,17 +133,19 @@ public class CardsAdapterTickets extends BaseAdapter {
         return view;
     }
 
-    private void printTicket(Ticket ticket) {
+    private int printTicket(Ticket ticket) {
+        int out;
         try {
             findBluetoothDevice();
             openBluetoothPrinter();
             printData(ticket.toString());
             disconnectBT();
+            out = 1;
         }catch(Exception e){
-            Toast.makeText(context, "Problemas con conexión a la impresora",
-                    Toast.LENGTH_LONG).show();
             e.printStackTrace();
+            out = 0;
         }
+        return out;
     }
 
     public void findBluetoothDevice(){
@@ -163,7 +183,7 @@ public class CardsAdapterTickets extends BaseAdapter {
 
     }
 
-    void openBluetoothPrinter() throws IOException {
+    void openBluetoothPrinter() {
         try{
 
             //Standard uuid from string //
@@ -237,12 +257,17 @@ public class CardsAdapterTickets extends BaseAdapter {
     }
 
     // Printing Text to Bluetooth Printer //
-    void printData(String msg) throws  IOException{
+    void printData(String msg) {
         try{
-            msg+="\n";
-            //msg = CHAR_ESC+msg;
-            outputStream.write(msg.getBytes(StandardCharsets.US_ASCII));
-            System.out.println("Printing Text...");
+            if(outputStream != null) {
+                msg += "\n";
+                //msg = CHAR_ESC+msg;
+                outputStream.write(msg.getBytes(StandardCharsets.US_ASCII));
+                System.out.println("Printing Text...");
+            }else{
+                Toast.makeText(context, "Problemas con conexión a la impresora",
+                        Toast.LENGTH_LONG).show();
+            }
         }catch (Exception ex){
             ex.printStackTrace();
             Toast.makeText(context, "Problemas con conexión a la impresora",
@@ -251,7 +276,7 @@ public class CardsAdapterTickets extends BaseAdapter {
     }
 
     // Disconnect Printer //
-    void disconnectBT() throws IOException{
+    void disconnectBT() {
         try {
             stopWorker=true;
             outputStream.close();

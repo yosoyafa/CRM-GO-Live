@@ -1,14 +1,11 @@
 package integracionip.impresoras;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.FrameLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
@@ -16,7 +13,6 @@ import java.util.ArrayList;
 
 import model.Client;
 import model.Persona;
-import utils.LogicDataBase;
 
 public class RecaudoActivity extends AppCompatActivity {
 
@@ -51,8 +47,15 @@ public class RecaudoActivity extends AppCompatActivity {
         clients = new ArrayList<Client>();
         for (int a = 0; a < numClients; a++) {
             String clt = getIntent().getStringExtra("client" + a);
+            System.out.println(clt);
             String[] cli = clt.split(",");
+
+            System.out.println("tel1:"+ cli[8]);
+            System.out.println("tel2:"+cli[9]);
+            System.out.println("dir:"+cli[10]);
+
             Client client = new Client(cli[0], cli[1], cli[2], cli[3], cli[4], cli[5], cli[6], cli[7], cli[8], cli[9], cli[10]);
+
             clients.add(client);
         }
         addCards(clients);
@@ -87,7 +90,7 @@ public class RecaudoActivity extends AppCompatActivity {
     }
 
     private void goConfigClientActivity() {
-        Intent configActivity = new Intent(getApplicationContext(), ConfigClientActivity.class);
+        Intent configActivity = new Intent(getApplicationContext(), EditClientActivity.class);
         configActivity.putExtra("nombre", persona.getNombre());
         configActivity.putExtra("cedula", persona.getCedula());
         configActivity.putExtra("direccion", persona.getDireccion());

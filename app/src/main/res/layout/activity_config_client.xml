@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ConfigClientActivity">
+    tools:context=".EditClientActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar_config"
@@ -17,8 +17,8 @@
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <android.support.v7.widget.CardView
-        android:layout_width="wrap_content"
-        android:layout_height="415dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
@@ -27,110 +27,102 @@
         card_view:cardElevation="10dp"
         card_view:cardUseCompatPadding="true">
 
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/et_nombreconfig"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Nombre"
+                    android:inputType="textEmailAddress"
+                    android:maxLines="1"
+                    android:singleLine="true" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/et_cedulaconfig"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Cédula"
+                    android:inputType="textEmailAddress"
+                    android:maxLines="1"
+                    android:singleLine="true" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/et_direccionconfig"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:digits=" 0123456789qwertyuiopasdfghjklñzxcvbnmQWERTYUIOPASDFGHJKLÑZXCVBNM-"
+                    android:hint="Dirección"
+                    android:inputType="textEmailAddress"
+                    android:maxLines="1"
+                    android:singleLine="true" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/et_tel1config"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:digits="0123456789"
+                    android:hint="Teléfono 1"
+                    android:inputType="numberDecimal"
+                    android:maxLength="10"
+                    android:maxLines="1"
+                    android:singleLine="true" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/et_tel2config"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:digits="0123456789"
+                    android:hint="Teléfono 2"
+                    android:inputType="numberDecimal"
+                    android:maxLength="10"
+                    android:maxLines="1"
+                    android:singleLine="true" />
+
+            </android.support.design.widget.TextInputLayout>
 
             <Button
                 android:id="@+id/button_saveconfig"
                 android:layout_width="wrap_content"
                 android:layout_height="35dp"
-                android:layout_marginStart="190dp"
-                android:layout_marginTop="330dp"
-                android:layout_marginEnd="208dp"
-                android:layout_marginBottom="0dp"
+                android:layout_gravity="end"
+                android:layout_margin="8dp"
                 android:layout_weight="1"
                 android:background="@drawable/my_button_bg"
                 android:text="Guardar" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <EditText
-                        android:id="@+id/et_nombreconfig"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Nombre"
-                        android:inputType="textEmailAddress"
-                        android:maxLines="1"
-                        android:singleLine="true" />
-
-                </android.support.design.widget.TextInputLayout>
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <EditText
-                        android:id="@+id/et_cedulaconfig"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Cédula"
-                        android:inputType="textEmailAddress"
-                        android:maxLines="1"
-                        android:singleLine="true" />
-
-                </android.support.design.widget.TextInputLayout>
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <EditText
-                        android:id="@+id/et_direccionconfig"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Dirección"
-                        android:inputType="textEmailAddress"
-                        android:maxLines="1"
-                        android:digits=" 0123456789qwertyuiopasdfghjklñzxcvbnmQWERTYUIOPASDFGHJKLÑZXCVBNM-#"
-                        android:singleLine="true" />
-
-                </android.support.design.widget.TextInputLayout>
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <EditText
-                        android:id="@+id/et_tel1config"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Teléfono 1"
-                        android:inputType="numberDecimal"
-                        android:maxLines="1"
-                        android:singleLine="true"
-                        android:digits="0123456789"
-                        android:maxLength="10" />
-
-                </android.support.design.widget.TextInputLayout>
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <EditText
-                        android:id="@+id/et_tel2config"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Teléfono 2"
-                        android:inputType="numberDecimal"
-                        android:maxLines="1"
-                        android:singleLine="true"
-                        android:digits="0123456789"
-                        android:maxLength="10"/>
-
-                </android.support.design.widget.TextInputLayout>
-            </LinearLayout>
-
-        </RelativeLayout>
+        </LinearLayout>
 
     </android.support.v7.widget.CardView>
 </LinearLayout>

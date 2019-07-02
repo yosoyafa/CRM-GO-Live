@@ -79,6 +79,8 @@ public class GestionActivity extends AppCompatActivity implements LocationListen
     }
 
     private void configUtils() {
+        lat = "-";
+        lon = "-";
         sharedPreferences = getSharedPreferences("Session", Context.MODE_PRIVATE);
         db = LoginActivity.getDb();
     }
@@ -136,35 +138,40 @@ public class GestionActivity extends AppCompatActivity implements LocationListen
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(checkBoxAcuerdo.isChecked()){
+                Thread t = new Thread(){
+                    public void run(){
+                        if(checkBoxAcuerdo.isChecked()){
 
-                    if(!etValorAcuerdo.getText().toString().isEmpty() &&
-                            Integer.parseInt(etValorAcuerdo.getText().toString()) != 0 &&
-                            !etDate.getText().toString().isEmpty() &&
-                            !etDescripcion.getText().toString().isEmpty()){
-                        acuerdoPago = checkBoxAcuerdo.isChecked();
-                        fecha = etDate.getText().toString();
-                        valorAcuerdo = etValorAcuerdo.getText().toString();
-                        descripcion = etDescripcion.getText().toString();
-                        resultadoGestion = spinnerResultado.getSelectedItem().toString();
-                        displayDialog(tipoGestion, acuerdoPago, fecha, valorAcuerdo, descripcion, resultadoGestion);
-                    }else{
-                        Toast.makeText(getApplicationContext(), "Ingresa toda la información solicitada.",
-                                Toast.LENGTH_LONG).show();
+                            if(!etValorAcuerdo.getText().toString().isEmpty() &&
+                                    Integer.parseInt(etValorAcuerdo.getText().toString()) != 0 &&
+                                    !etDate.getText().toString().isEmpty() &&
+                                    !etDescripcion.getText().toString().isEmpty()){
+                                acuerdoPago = checkBoxAcuerdo.isChecked();
+                                fecha = etDate.getText().toString();
+                                valorAcuerdo = etValorAcuerdo.getText().toString();
+                                descripcion = etDescripcion.getText().toString();
+                                resultadoGestion = spinnerResultado.getSelectedItem().toString();
+                                displayDialog(tipoGestion, acuerdoPago, fecha, valorAcuerdo, descripcion, resultadoGestion);
+                            }else{
+                                Toast.makeText(getApplicationContext(), "Ingresa toda la información solicitada.",
+                                        Toast.LENGTH_LONG).show();
+                            }
+                        }else{
+                            if(!etDescripcion.getText().toString().isEmpty()){
+                                acuerdoPago = checkBoxAcuerdo.isChecked();
+                                fecha = "";
+                                valorAcuerdo = "";
+                                descripcion = etDescripcion.getText().toString();
+                                resultadoGestion = spinnerResultado.getSelectedItem().toString();
+                                displayDialog(tipoGestion, acuerdoPago, fecha, valorAcuerdo, descripcion, resultadoGestion);
+                            }else{
+                                Toast.makeText(getApplicationContext(), "Ingresa toda la información solicitada.",
+                                        Toast.LENGTH_LONG).show();
+                            }
+                        }
                     }
-                }else{
-                    if(!etDescripcion.getText().toString().isEmpty()){
-                        acuerdoPago = checkBoxAcuerdo.isChecked();
-                        fecha = "";
-                        valorAcuerdo = "";
-                        descripcion = etDescripcion.getText().toString();
-                        resultadoGestion = spinnerResultado.getSelectedItem().toString();
-                        displayDialog(tipoGestion, acuerdoPago, fecha, valorAcuerdo, descripcion, resultadoGestion);
-                    }else{
-                        Toast.makeText(getApplicationContext(), "Ingresa toda la información solicitada.",
-                                Toast.LENGTH_LONG).show();
-                    }
-                }
+                };
+                t.start();
             }
         });
         dateButton.setOnClickListener(new View.OnClickListener() {
@@ -223,8 +230,12 @@ public class GestionActivity extends AppCompatActivity implements LocationListen
 
     @Override
     public void onLocationChanged(Location location) {
-        lon = location.getLongitude()+"";
-        lat = location.getLatitude()+"";
+        try {
+            lon = location.getLongitude() + "";
+            lat = location.getLatitude() + "";
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -262,7 +273,7 @@ public class GestionActivity extends AppCompatActivity implements LocationListen
     private boolean saveGestion(String tipoGestion, boolean acuerdoPago, String fecha, String valorAcuerdo, String descripcion, String resultadoGestion, String lat, String lon) {
         DateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         String f = df.format(Calendar.getInstance().getTime());
-        ConexionHTTP conexionHTTP = new ConexionHTTP();
+        ConexionHTTP conexionHTTP = new ConexionHTTP(sharedPreferences.getString("sede","-"));
         fecha = fecha.replace("/","-");
         String acuerdoPagoStr = "0";
         if (acuerdoPago) {

@@ -14,7 +14,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ConfigClientActivity"></activity>
+        <activity android:name=".EditClientActivity"></activity>
         <activity
             android:name=".AboutActivity"
             android:screenOrientation="portrait" />

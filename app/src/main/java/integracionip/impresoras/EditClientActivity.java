@@ -33,7 +33,7 @@ import model.Persona;
 import utils.ConexionHTTP;
 import utils.LogicDataBase;
 
-public class ConfigClientActivity extends AppCompatActivity implements PaymentDialog.ExampleDialogListener, LocationListener {
+public class EditClientActivity extends AppCompatActivity implements PaymentDialog.ExampleDialogListener, LocationListener {
 
     private Persona persona;
     private SharedPreferences sharedPreferences;
@@ -57,6 +57,8 @@ public class ConfigClientActivity extends AppCompatActivity implements PaymentDi
     }
 
     private void configUtils() {
+        lat = "-";
+        lon = "-";
         done = false;
         sharedPreferences = getSharedPreferences("Session", Context.MODE_PRIVATE);
         db = LoginActivity.getDb();
@@ -83,17 +85,22 @@ public class ConfigClientActivity extends AppCompatActivity implements PaymentDi
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(changes() && (etTel1.getText().toString().isEmpty() || etTel2.getText().toString().isEmpty() || etDireccion.getText().toString().isEmpty())){
-                    Toast.makeText(getApplicationContext(), "Completa la informacion solicitada",
-                            Toast.LENGTH_LONG).show();
-                }else{
-                    if(changes()) {
-                        showConfirmChangesDialog();
-                    }else{
-                        Toast.makeText(getApplicationContext(), "Realiza algún cambio",
-                                Toast.LENGTH_LONG).show();
+                Thread t = new Thread(){
+                    public void run(){
+                        if(changes() && (etTel1.getText().toString().isEmpty() || etTel2.getText().toString().isEmpty() || etDireccion.getText().toString().isEmpty() || isBlank(etDireccion.getText().toString()))){
+                            Toast.makeText(getApplicationContext(), "Completa la informacion solicitada",
+                                    Toast.LENGTH_LONG).show();
+                        }else{
+                            if(changes()) {
+                                showConfirmChangesDialog();
+                            }else{
+                                Toast.makeText(getApplicationContext(), "Realiza algún cambio",
+                                        Toast.LENGTH_LONG).show();
+                            }
+                        }
                     }
-                }
+                };
+                t.start();
             }
         });
     }
@@ -101,7 +108,7 @@ public class ConfigClientActivity extends AppCompatActivity implements PaymentDi
     private boolean saveConfig() {
         DateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         String fecha = df.format(Calendar.getInstance().getTime());
-        ConexionHTTP conexionHTTP = new ConexionHTTP();
+        ConexionHTTP conexionHTTP = new ConexionHTTP(sharedPreferences.getString("sede","-"));
         String newDir = etDireccion.getText().toString().replace("#","%23");
         conexionHTTP.edicion(sharedPreferences.getString("user","-"),sharedPreferences.getString("id","-"),persona.getNombre(),persona.getCedula(),persona.getTelefono1(),etTel1.getText().toString(),persona.getTelefono2(),etTel2.getText().toString(),persona.getDireccion(),newDir,fecha,lat,lon);
         while (!conexionHTTP.isFinishProcess()) {
@@ -289,13 +296,22 @@ public class ConfigClientActivity extends AppCompatActivity implements PaymentDi
     public void applyTexts() {
         if(saveConfig()){
             done = true;
+            finish();
         }
+    }
+
+    public boolean isBlank(String p){
+        return p.trim().isEmpty();
     }
 
     @Override
     public void onLocationChanged(Location location) {
-        lon = location.getLongitude()+"";
-        lat = location.getLatitude()+"";
+        try {
+            lon = location.getLongitude() + "";
+            lat = location.getLatitude() + "";
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override

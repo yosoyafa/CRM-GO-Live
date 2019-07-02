@@ -17,15 +17,16 @@
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp">
+        android:layout_marginStart="16dp"
+        android:orientation="vertical">
         <ListView
             android:id="@+id/lv"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-    </RelativeLayout>
+    </LinearLayout>
 
 </LinearLayout>

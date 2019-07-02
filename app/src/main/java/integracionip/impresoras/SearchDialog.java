@@ -35,8 +35,13 @@ public class SearchDialog extends AppCompatDialogFragment {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         String cc = editTextUsername.getText().toString();
                         if(!cc.isEmpty()) {
-                            listener.applyTexts(action+","+cc);
-                            dismiss();
+                            try {
+                                listener.applyTexts(action + "," + cc);
+                                dismiss();
+                            }catch(Exception e){
+                                e.printStackTrace();
+                                System.out.print("raioz");
+                            }
                         }
                     }
                 });

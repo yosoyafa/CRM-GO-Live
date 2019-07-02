@@ -1,6 +1,7 @@
 package integracionip.impresoras;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -35,6 +36,7 @@ public class LoginActivity extends AppCompatActivity implements LocationListener
     private String latitude, longitude;
     private Toolbar toolbar;
     private PermissionManager permissionManager;
+    private ProgressDialog progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +62,57 @@ public class LoginActivity extends AppCompatActivity implements LocationListener
             mEmailSignInButton.setOnClickListener(new View.OnClickListener() {
                                                       @Override
                                                       public void onClick(View view) {
-                                                          login();
+                                                          progress = ProgressDialog.show(LoginActivity.this, "Cargando",
+                                                                  "Iniciando sesión", true);
+
+                                                          new Thread(new Runnable() {
+                                                              @Override
+                                                              public void run()
+                                                              {
+                                                                  try {
+                                                                      int a = login();
+                                                                      if(a==1){
+                                                                          LoginActivity.this.runOnUiThread(new Runnable() {
+                                                                              public void run() {
+                                                                                  Toast.makeText(LoginActivity.this, "Usuario o contraseña incorrecta",
+                                                                                          Toast.LENGTH_LONG).show();
+                                                                              }
+                                                                          });
+                                                                      }else if(a==2){
+                                                                          LoginActivity.this.runOnUiThread(new Runnable() {
+                                                                              public void run() {
+                                                                                  Toast.makeText(LoginActivity.this, "Usuario NO Autorizado para APP ",
+                                                                                          Toast.LENGTH_LONG).show();
+                                                                              }
+                                                                          });
+                                                                      }else if(a==3){
+                                                                          LoginActivity.this.runOnUiThread(new Runnable() {
+                                                                              public void run() {
+                                                                                  Toast.makeText(LoginActivity.this, "ERROR",
+                                                                                          Toast.LENGTH_LONG).show();
+                                                                              }
+                                                                          });
+                                                                      }else if(a==4){
+                                                                          LoginActivity.this.runOnUiThread(new Runnable() {
+                                                                              public void run() {
+                                                                                  Toast.makeText(LoginActivity.this, "Llena todos los campos",
+                                                                                          Toast.LENGTH_LONG).show();
+                                                                              }
+                                                                          });
+                                                                      }
+                                                                  }catch(Exception e){
+                                                                      e.printStackTrace();
+                                                                  }
+
+                                                                  runOnUiThread(new Runnable() {
+                                                                      @Override
+                                                                      public void run()
+                                                                      {
+                                                                          progress.dismiss();
+                                                                      }
+                                                                  });
+                                                              }
+                                                          }).start();
                                                       }
                                                   }
             );
@@ -86,7 +138,7 @@ public class LoginActivity extends AppCompatActivity implements LocationListener
         permissionManager.checkAndRequestPermissions(this);
     }
 
-    private void login() {
+    private int login() {
         String user = mEmailView.getText().toString();
         String pass = mPasswordView.getText().toString();
         ConexionHTTP conexion = new ConexionHTTP();
@@ -118,24 +170,32 @@ public class LoginActivity extends AppCompatActivity implements LocationListener
                         editor.putString("numerador_rc",respuesta.getString("numerador_rc_manual"));
                         editor.putString("cabecera",respuesta.getString("agencia")+"\n"+respuesta.getString("puntodeventa"));
                         editor.putString("impresora", respuesta.getString("impresora"));
+                        //todo: poner el valor variable
+                        editor.putString("sede", "llano");
+                        //editor.putString("sede", respuesta.getString("sede"));
                         editor.commit();
                         goMainScreen();
+                        return 0;
                     } else {
-                        Toast.makeText(this, "Usuario o contraseña incorrecta",
-                                Toast.LENGTH_LONG).show();
+//                        Toast.makeText(this, "Usuario o contraseña incorrecta",
+//                                Toast.LENGTH_LONG).show();
+                        return 1;
                     }
                 } else {
-                    Toast.makeText(this, "Usuario NO Autorizado para APP ",
-                            Toast.LENGTH_LONG).show();
+//                    Toast.makeText(this, "Usuario NO Autorizado para APP ",
+//                            Toast.LENGTH_LONG).show();
+                    return 2;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                Toast.makeText(this, "ERROR",
-                        Toast.LENGTH_LONG).show();
+//                Toast.makeText(this, "ERROR",
+//                        Toast.LENGTH_LONG).show();
+                return 3;
             }
         } else {
-            Toast.makeText(this, "Llena todos los campos",
-                    Toast.LENGTH_LONG).show();
+//            Toast.makeText(this, "Llena todos los campos",
+//                    Toast.LENGTH_LONG).show();
+            return 4;
         }
     }
 

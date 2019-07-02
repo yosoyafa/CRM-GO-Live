@@ -6,7 +6,10 @@ public class Ticket {
 
     private String formaDePago, cabecera, fecha, vigD, vigH, valorVigContrato, numRecibo, numContrato, ccCliente, nombCliente, valorRecaudado, observacion, nombAsesor, periodicidad;
 
-    public Ticket(String cabecera, String fecha, String vigD, String vigH, String valorVigContrato, String periodicidad, String numRecibo, String numContrato, String ccCliente, String nombCliente, String valorRecaudado, String observacion, String nombAsesor, String fdp) {
+    public Ticket(String cabecera, String fecha, String vigD, String vigH, String valorVigContrato, String periodicidad,
+                  String numRecibo, String numContrato, String ccCliente, String nombCliente, String valorRecaudado,
+                  String observacion, String nombAsesor, String fdp) {
+
         this.cabecera = cabecera;
         this.formaDePago = fdp;
         this.fecha = fecha;
@@ -24,7 +27,7 @@ public class Ticket {
     }
 
     public String toStringRaw(){
-        return cabecera+","+fecha+","+vigD+","+vigH+","+valorVigContrato+","+periodicidad+","+numRecibo+","+numContrato+","+ccCliente+","+nombCliente+","+valorRecaudado+","+formaDePago+","+observacion+","+nombAsesor;
+        return cabecera+","+fecha+","+vigD+","+vigH+","+valorVigContrato+","+periodicidad+","+numRecibo+","+numContrato+","+ccCliente+","+nombCliente+","+valorRecaudado+","+observacion+","+nombAsesor+","+formaDePago;
     }
 
     public String toString() {

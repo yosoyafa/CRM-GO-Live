@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.widget.EditText;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import model.Client;
 import model.Edicion;
@@ -18,7 +19,7 @@ import model.Ticket;
 public class LogicDataBase extends SQLiteOpenHelper{
 
     private static final String DATABASE_NAME = "BaseDeDatos.db";
-    private static final int DATABASE_VERSION = 11;
+    private static final int DATABASE_VERSION = 12;
 
     public LogicDataBase(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -340,22 +341,23 @@ public class LogicDataBase extends SQLiteOpenHelper{
             tickets = new ArrayList<Ticket>();
             if (cursor.moveToFirst()) {
                 while (!cursor.isAfterLast()) {
-                    String p0 = cursor.getString(0);
-                    String p1 = cursor.getString(1);
-                    String p2 = cursor.getString(2);
-                    String p3 = cursor.getString(3);
-                    String p4 = cursor.getString(4);
-                    String p5 = cursor.getString(5);
-                    String p6 = cursor.getString(6);
-                    String p7 = cursor.getString(7);
-                    String p8 = cursor.getString(8);
-                    String p9 = cursor.getString(9);
-                    String p10 = cursor.getString(10);
-                    String p11 = cursor.getString(11);
-                    String p12 = cursor.getString(12);
-                    String p13 = cursor.getString(13);
+                    String p1 = cursor.getString(cursor.getColumnIndex(DataBase.DataTicketColumns.TICKET_CABECERA));
+                    String p2 = cursor.getString(cursor.getColumnIndex(DataBase.DataTicketColumns.TICKET_FECHA));
+                    String p3 = cursor.getString(cursor.getColumnIndex(DataBase.DataTicketColumns.TICKET_VIGD));
+                    String p4 = cursor.getString(cursor.getColumnIndex(DataBase.DataTicketColumns.TICKET_VIGH));
+                    String p5 = cursor.getString(cursor.getColumnIndex(DataBase.DataTicketColumns.TICKET_VALORVIGCONTRATO));
+                    String p6 = cursor.getString(cursor.getColumnIndex(DataBase.DataTicketColumns.TICKET_PERIODICIDAD));
+                    String p7 = cursor.getString(cursor.getColumnIndex(DataBase.DataTicketColumns.TICKET_NUMRECIBO));
+                    String p8 = cursor.getString(cursor.getColumnIndex(DataBase.DataTicketColumns.TICKET_NUMCONTRATO));
+                    String p9 = cursor.getString(cursor.getColumnIndex(DataBase.DataTicketColumns.TICKET_CCCLIENTE));
+                    String p10 = cursor.getString(cursor.getColumnIndex(DataBase.DataTicketColumns.TICKET_NOMBCLIENTE));
+                    String p11 = cursor.getString(cursor.getColumnIndex(DataBase.DataTicketColumns.TICKET_VALORRECAUDADO));
+                    String p12 = cursor.getString(cursor.getColumnIndex(DataBase.DataTicketColumns.TICKET_OBSERVACION));
+                    String p13 = cursor.getString(cursor.getColumnIndex(DataBase.DataTicketColumns.TICKET_NOMBASESOR));
+                    String p14 = cursor.getString(cursor.getColumnIndex(DataBase.DataTicketColumns.TICKET_FDP));
 
-                    Ticket tick = new Ticket(p0,p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13);
+                    Ticket tick = new Ticket(p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14);
+                    System.out.println(tick.toStringRaw());
                     tickets.add(tick);
                     cursor.moveToNext();
                 }
@@ -364,6 +366,7 @@ public class LogicDataBase extends SQLiteOpenHelper{
         }catch(Exception e){
             e.printStackTrace();
         }
+        Collections.reverse(tickets);
         return tickets;
     }
 

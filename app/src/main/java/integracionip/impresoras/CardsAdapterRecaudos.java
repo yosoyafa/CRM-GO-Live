@@ -61,7 +61,13 @@ public class CardsAdapterRecaudos extends BaseAdapter {
         button_pagar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                goToRecaudoDetails(client);
+                Thread t = new Thread(){
+                    public void run(){
+                        goToRecaudoDetails(client);
+                    }
+                };
+                t.start();
+
             }
         });
 
@@ -69,7 +75,12 @@ public class CardsAdapterRecaudos extends BaseAdapter {
         button_gestion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                goToGestionActivity(client);
+                Thread t = new Thread(){
+                  public void run(){
+                      goToGestionActivity(client);
+                  }
+                };
+                t.start();
             }
         });
 
